@@ -1,0 +1,104 @@
+version: '3'
+
+# bald-crud monorepo 任务入口（取代 Makefile / tag.bat / upgrade.sh / upgrade.ps1）。
+# 依赖：go-task、buf（api 任务）、git。
+# Windows 需在 git-bash/wsl 下运行 go-task（命令块为 POSIX sh 语法）。
+
+vars:
+  # 所有含 go.mod 的模块目录（换行分隔，已排序，排除 .git/.idea/.zcode）。
+  MODULE_DIRS:
+    sh: find . -name go.mod -not -path '*/.git/*' -not -path '*/.idea/*' -not -path '*/.zcode/*' | sed 's,/go.mod$,,' | sort
+
+  # 模块 tag 清单（对应原 tag.bat；可用 task tag TAGS=api/v0.0.8 覆盖）。
+  TAGS:
+    - api/v0.0.7
+    - pagination/v0.0.15
+    - viewer/v0.0.6
+    - audit/v0.0.2
+    - cache/v0.0.1
+    - entgo/v0.0.53
+    - gorm/v0.0.22
+    - cassandra/v0.0.4
+    - elasticsearch/v0.0.11
+    - opensearch/v0.0.7
+    - clickhouse/v0.0.20
+    - influxdb/v0.0.14
+    - mongodb/v0.0.15
+    - doris/v0.0.18
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  modules:
+    desc: 列出所有模块目录
+    silent: true
+    cmds:
+      - echo "{{.MODULE_DIRS}}"
+
+  api:
+    desc: 生成 protobuf API Go 代码（api/ 目录，buf）
+    dir: api
+    cmds:
+      - buf generate
+
+  test:
+    desc: 对每个模块执行 go test ./...（任一失败即停）
+    cmds:
+      - for: { var: MODULE_DIRS }
+        cmd: echo "==> testing {{.ITEM}}"; (cd {{.ITEM}} && go test ./...)
+
+  test-short:
+    desc: 对每个模块执行 go test -short ./...（集成测试自跳过）
+    cmds:
+      - for: { var: MODULE_DIRS }
+        cmd: echo "==> testing (short) {{.ITEM}}"; (cd {{.ITEM}} && go test -short ./...)
+
+  vet:
+    desc: 对每个模块执行 go vet ./...
+    cmds:
+      - for: { var: MODULE_DIRS }
+        cmd: echo "==> vetting {{.ITEM}}"; (cd {{.ITEM}} && go vet ./...)
+
+  upgrade:
+    desc: 递归升级所有模块依赖（go get -u ./... + go mod tidy），失败汇总后退出 1
+    cmds:
+      - |
+        total=0; success=0; failed=0; failed_list=""
+        for dir in {{.MODULE_DIRS}}; do
+          total=$((total+1))
+          echo "==> upgrading $dir"
+          if (cd "$dir" && go get -u ./... && go mod tidy); then
+            success=$((success+1))
+            echo "    ✓ done"
+          else
+            failed=$((failed+1))
+            failed_list="$failed_list  ✗ $dir\n"
+            echo "    ✗ failed: $dir"
+          fi
+        done
+        echo ""
+        echo "=== Summary ==="
+        echo "Total modules: $total"
+        echo "Succeeded:     $success"
+        if [ "$failed" -gt 0 ]; then
+          echo "Failed:        $failed"
+          echo ""
+          echo "Failed modules:"
+          printf "$failed_list"
+          exit 1
+        fi
+        echo "All modules upgraded successfully!"
+
+  tag:
+    desc: 为全部子模块打 tag（--force，可用 TAGS= 覆盖清单）
+    cmds:
+      - for: { var: TAGS }
+        cmd: git tag {{.ITEM}} --force
+
+  tag:push:
+    desc: 推送所有 tag 到 origin
+    cmds:
+      - git push origin --tags
