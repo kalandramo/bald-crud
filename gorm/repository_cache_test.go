@@ -10,7 +10,7 @@ import (
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	paginationBase "github.com/kalandramo/bald-crud/pagination"
 	"github.com/kalandramo/bald-crud/viewer"
-	"github.com/tx7do/go-utils/mapper"
+	"github.com/kalandramo/bald-utils/mapper"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

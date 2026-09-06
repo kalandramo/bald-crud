@@ -10,7 +10,7 @@ import (
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/influxdb/query"
-	"github.com/tx7do/go-utils/stringcase"
+	"github.com/kalandramo/bald-utils/stringcase"
 )
 
 var jsonKeyPattern = regexp.MustCompile(`^[A-Za-z0-9_.]+$`)

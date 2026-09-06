@@ -8,7 +8,7 @@ import (
 	_ "github.com/tx7do/go-wind-plugins/encoding/json"
 
 	"github.com/kalandramo/bald-crud/mongodb/query"
-	"github.com/tx7do/go-utils/stringcase"
+	"github.com/kalandramo/bald-utils/stringcase"
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	bsonV2 "go.mongodb.org/mongo-driver/v2/bson"

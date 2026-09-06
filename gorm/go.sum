@@ -413,12 +413,6 @@ github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 github.com/tjfoc/gmsm v1.4.1 h1:aMe1GlZb+0bLjn+cKTPEvvn9oUEBlJitaZiiBwsbgho=
 github.com/tjfoc/gmsm v1.4.1/go.mod h1:j4INPkHWMrhJb38G+J6W4Tw0AbuN8Thu3PbdVYhVcTE=
-github.com/tx7do/go-utils v1.1.40 h1:PA6ZpBRbYZNUc3xiSP6oRhMGa9iCXLzF5pwvZHJmpZQ=
-github.com/tx7do/go-utils v1.1.40/go.mod h1:A5zjhW0UTM6veYuCbq7/mcwDXaBw8UhBnvaLSwURBRg=
-github.com/tx7do/go-utils/id v0.0.6 h1:AFGGf5uxXrclOj//ZCwnkorfLcrhbGqyrVzHG3stuR8=
-github.com/tx7do/go-utils/id v0.0.6/go.mod h1:0jomL+PRLctsA5VA0C6D7EMB4NVKfZMuLPv8HeWih2w=
-github.com/tx7do/go-utils/mapper v0.0.3 h1:Z7YoPVsa6I3lfWGSUoa9atujHWeF3kP+yKfS6Rkx5SM=
-github.com/tx7do/go-utils/mapper v0.0.3/go.mod h1:zziBbtoqCt8pRw+jmK9Ic9sRD7a2yCLWG40Hy2UCSCs=
 github.com/tx7do/go-wind v0.0.2 h1:kuI2QpwGacfROQpugPFWIcrtztv7qwFwQ4ts+LTsq2k=
 github.com/tx7do/go-wind v0.0.2/go.mod h1:BgeqjCLtGfTlT709176kd2KuLq7I1Am9tqQBrzYssc0=
 github.com/tx7do/go-wind-plugins/encoding v0.0.1 h1:JAFl2LU5/6VBE8WgZvJjEaAD4BDhstS2nhuUC9GrzM4=

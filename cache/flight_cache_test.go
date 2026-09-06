@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tx7do/go-utils/trans"
+	"github.com/kalandramo/bald-utils/trans"
 )
 
 // TestSingleFlight_Do_SingleExecution: 验证并发请求只执行一次

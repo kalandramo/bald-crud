@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
-	"github.com/tx7do/go-utils/trans"
+	"github.com/kalandramo/bald-utils/trans"
 	"github.com/tx7do/go-wind/log"
 )
 

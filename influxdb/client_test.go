@@ -7,7 +7,7 @@ import (
 
 	"github.com/InfluxCommunity/influxdb3-go/v2/influxdb3"
 	"github.com/stretchr/testify/assert"
-	"github.com/tx7do/go-utils/trans"
+	"github.com/kalandramo/bald-utils/trans"
 	"github.com/tx7do/go-wind/log"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

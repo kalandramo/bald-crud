@@ -10,9 +10,9 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/go-wind/log"
 
-	"github.com/tx7do/go-utils/fieldmaskutil"
-	"github.com/tx7do/go-utils/mapper"
-	"github.com/tx7do/go-utils/trans"
+	"github.com/kalandramo/bald-utils/fieldmaskutil"
+	"github.com/kalandramo/bald-utils/mapper"
+	"github.com/kalandramo/bald-utils/trans"
 
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"

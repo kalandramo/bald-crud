@@ -181,7 +181,7 @@ defer client.Close()
 
 ```go
 import (
-    "github.com/tx7do/go-utils/mapper"
+    "github.com/kalandramo/bald-utils/mapper"
     "github.com/kalandramo/bald-crud/mongodb"
 )
 
@@ -708,7 +708,7 @@ go test -v ./mongodb -run TestClient
 ## 依赖
 
 - `go.mongodb.org/mongo-driver/v2` - MongoDB Go 驱动（v2）
-- `github.com/tx7do/go-utils/mapper` - DTO/Document 映射
+- `github.com/kalandramo/bald-utils/mapper` - DTO/Document 映射
 - `github.com/kalandramo/bald/bconf` - Protobuf 定义
 - `github.com/tx7do/go-wind` - go-wind 框架（日志）
 

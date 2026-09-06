@@ -1,7 +1,6 @@
 module github.com/kalandramo/bald-crud/clickhouse
 
-go 1.26.3
-
+go 1.26.5
 
 replace github.com/kalandramo/bald-crud/pagination => ../pagination
 
@@ -11,10 +10,10 @@ require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.48.0
 	github.com/kalandramo/bald-crud/pagination v0.0.15
 	github.com/kalandramo/bald-crud/viewer v0.0.6
+	github.com/kalandramo/bald-utils v0.0.0-00010101000000-000000000000
+	github.com/kalandramo/bald-utils/mapper v0.0.0-00010101000000-000000000000
 	github.com/kalandramo/bald/bconf v0.0.0-00010101000000-000000000000
 	github.com/stretchr/testify v1.11.1
-	github.com/tx7do/go-utils v1.1.40
-	github.com/tx7do/go-utils/mapper v0.0.3
 	github.com/tx7do/go-wind v0.0.2
 	github.com/tx7do/go-wind-plugins/encoding v0.0.1
 	google.golang.org/protobuf v1.36.12
@@ -49,3 +48,7 @@ require (
 replace github.com/kalandramo/bald-crud => ../
 
 replace github.com/kalandramo/bald/bconf => ../../bald/bconf
+
+replace github.com/kalandramo/bald-utils => ../../bald-utils
+
+replace github.com/kalandramo/bald-utils/mapper => ../../bald-utils/mapper

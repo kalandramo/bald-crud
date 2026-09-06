@@ -5,7 +5,7 @@ import (
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/opensearch/query"
-	"github.com/tx7do/go-utils/stringcase"
+	"github.com/kalandramo/bald-utils/stringcase"
 )
 
 // StructuredSorting 将结构化排序指令转换为 OpenSearch 的 sort 数组

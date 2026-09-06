@@ -3,7 +3,7 @@ package mixin
 import (
 	"gorm.io/gorm"
 
-	"github.com/tx7do/go-utils/id"
+	"github.com/kalandramo/bald-utils/id"
 )
 
 // SnowflakeID 是 GORM 可复用的 mixin，用于使用 Sonyflake 生成的 uint64 主键。

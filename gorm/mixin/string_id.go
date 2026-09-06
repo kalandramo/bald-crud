@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/tx7do/go-utils/id"
+	"github.com/kalandramo/bald-utils/id"
 	"gorm.io/gorm"
 )
 

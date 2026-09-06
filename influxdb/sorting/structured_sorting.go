@@ -5,7 +5,7 @@ import (
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/influxdb/query"
-	"github.com/tx7do/go-utils/stringcase"
+	"github.com/kalandramo/bald-utils/stringcase"
 )
 
 // StructuredSorting 将结构化排序指令转换为 InfluxDB 的 ORDER BY 子句

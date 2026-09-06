@@ -1,12 +1,11 @@
 module github.com/kalandramo/bald-crud/pagination
 
-go 1.26.3
-
+go 1.26.5
 
 require (
 	github.com/google/go-cmp v0.7.0
+	github.com/kalandramo/bald-utils v0.0.0-00010101000000-000000000000
 	github.com/kalandramo/bald/bconf v0.0.0-00010101000000-000000000000
-	github.com/tx7do/go-utils v1.1.40
 	github.com/tx7do/go-wind-plugins/encoding v0.0.1
 	github.com/tx7do/go-wind-plugins/encoding/json v0.0.1
 	go.einride.tech/aip v0.86.3
@@ -20,3 +19,5 @@ require (
 )
 
 replace github.com/kalandramo/bald/bconf => ../../bald/bconf
+
+replace github.com/kalandramo/bald-utils => ../../bald-utils

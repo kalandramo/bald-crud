@@ -13,7 +13,7 @@ import (
 	"github.com/tx7do/go-wind/log"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
-	"github.com/tx7do/go-utils/mapper"
+	"github.com/kalandramo/bald-utils/mapper"
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/cache"

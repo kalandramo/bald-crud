@@ -1,6 +1,6 @@
 module github.com/kalandramo/bald-crud/elasticsearch
 
-go 1.26.3
+go 1.26.5
 
 
 replace github.com/kalandramo/bald-crud/pagination => ../pagination

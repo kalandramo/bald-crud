@@ -3,7 +3,7 @@ package filter
 import (
 	"strings"
 
-	"github.com/tx7do/go-utils/stringcase"
+	"github.com/kalandramo/bald-utils/stringcase"
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )

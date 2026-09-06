@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/kalandramo/bald-crud/mongodb/query"
-	"github.com/tx7do/go-utils/stringcase"
+	"github.com/kalandramo/bald-utils/stringcase"
 	bsonV2 "go.mongodb.org/mongo-driver/v2/bson"
 )
 

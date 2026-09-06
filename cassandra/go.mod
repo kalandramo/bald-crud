@@ -1,6 +1,6 @@
 module github.com/kalandramo/bald-crud/cassandra
 
-go 1.25.0
+go 1.26.5
 
 replace github.com/kalandramo/bald-crud => ../
 

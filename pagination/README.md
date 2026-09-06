@@ -740,7 +740,7 @@ go test -v ./pagination/sorting -run TestOrderBy
 
 - `google.golang.org/protobuf` - Protocol Buffers
 - `go.einride.tech/aip` - Google AIP 规范库
-- `github.com/tx7do/go-utils/stringcase` - 字符串转换工具
+- `github.com/kalandramo/bald-utils/stringcase` - 字符串转换工具
 - `github.com/kalandramo/bald/bconf` - Protobuf 定义（PagingRequest、FilterExpr、Sorting 等）
 
 ---

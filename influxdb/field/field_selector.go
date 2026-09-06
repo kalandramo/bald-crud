@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/kalandramo/bald-crud/influxdb/query"
-	"github.com/tx7do/go-utils/stringcase"
+	"github.com/kalandramo/bald-utils/stringcase"
 )
 
 var fieldNameRegexp = regexp.MustCompile(`^[A-Za-z0-9_.]+$`)

@@ -77,7 +77,7 @@ message User {
 
 ```go
 import (
-    "github.com/tx7do/go-utils/mapper"
+    "github.com/kalandramo/bald-utils/mapper"
     "github.com/kalandramo/bald-crud/entgo"
 )
 
@@ -618,7 +618,7 @@ go test -v ./entgo -run TestTree
 ## 依赖
 
 - `entgo.io/ent` - Ent ORM 框架
-- `github.com/tx7do/go-utils/mapper` - DTO/Entity 映射
+- `github.com/kalandramo/bald-utils/mapper` - DTO/Entity 映射
 - `github.com/redis/go-redis/v9` - Redis 客户端（缓存）
 - `github.com/kalandramo/bald/bconf` - Protobuf 定义
 - `github.com/kalandramo/bald-crud/cache` - 缓存支持

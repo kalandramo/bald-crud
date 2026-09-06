@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tx7do/go-utils/trans"
+	"github.com/kalandramo/bald-utils/trans"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"entgo.io/ent/dialect"

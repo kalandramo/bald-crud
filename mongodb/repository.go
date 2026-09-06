@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/tx7do/go-utils/mapper"
+	"github.com/kalandramo/bald-utils/mapper"
 	"github.com/tx7do/go-wind/log"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 

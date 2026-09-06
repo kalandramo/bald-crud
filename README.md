@@ -238,7 +238,7 @@ import (
     "fmt"
 
     "github.com/kalandramo/bald-crud/gorm"
-    "github.com/tx7do/go-utils/mapper"
+    "github.com/kalandramo/bald-utils/mapper"
     storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
@@ -279,7 +279,7 @@ package main
 
 import (
     "github.com/kalandramo/bald-crud/clickhouse"
-    "github.com/tx7do/go-utils/mapper"
+    "github.com/kalandramo/bald-utils/mapper"
 )
 
 func main() {

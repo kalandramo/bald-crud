@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tx7do/go-utils/trans"
+	"github.com/kalandramo/bald-utils/trans"
 	"github.com/tx7do/go-wind/log"
 	"google.golang.org/protobuf/types/known/timestamppb"
 

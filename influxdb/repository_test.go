@@ -6,7 +6,7 @@ package influxdb
 //
 //	"github.com/tx7do/go-wind/log"
 //	"github.com/stretchr/testify/assert"
-//	"github.com/tx7do/go-utils/mapper"
+//	"github.com/kalandramo/bald-utils/mapper"
 //
 //	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 //	mongoV2 "go.mongodb.org/mongo-driver/v2/mongo"

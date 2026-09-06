@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
-	"github.com/tx7do/go-utils/trans"
+	"github.com/kalandramo/bald-utils/trans"
 )
 
 func TestConverterStringToOperator(t *testing.T) {
