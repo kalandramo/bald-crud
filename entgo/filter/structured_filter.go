@@ -8,13 +8,13 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
-	_ "github.com/tx7do/go-wind-plugins/encoding/json"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
+	"github.com/kalandramo/bald/log"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/entgo/ent"
 	"github.com/kalandramo/bald-crud/pagination/filter"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
 // StructuredFilter 基于 FilterExpr 的过滤器
@@ -24,7 +24,7 @@ type StructuredFilter struct {
 
 func NewStructuredFilter() *StructuredFilter {
 	return &StructuredFilter{
-		codec: encoding.GetCodec("json"),
+		codec: jsoncodec.New(),
 	}
 }
 

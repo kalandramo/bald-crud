@@ -4,7 +4,7 @@ package influxdb
 //	"context"
 //	"testing"
 //
-//	"github.com/tx7do/go-wind/log"
+//	"github.com/kalandramo/bald/log"
 //	"github.com/stretchr/testify/assert"
 //	"github.com/kalandramo/bald-utils/mapper"
 //

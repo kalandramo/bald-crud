@@ -4,8 +4,8 @@ import (
 	"crypto/tls"
 	"time"
 
+	"github.com/kalandramo/bald/log"
 	optionsV2 "go.mongodb.org/mongo-driver/v2/mongo/options"
-	"github.com/tx7do/go-wind/log"
 )
 
 type Option func(o *Client)

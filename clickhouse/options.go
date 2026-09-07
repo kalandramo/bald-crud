@@ -6,7 +6,7 @@ import (
 	"time"
 
 	clickhouseV2 "github.com/ClickHouse/clickhouse-go/v2"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 )
 
 type Creator func() any

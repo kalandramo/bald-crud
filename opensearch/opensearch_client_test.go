@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-utils/trans"
-	"github.com/tx7do/go-wind/log"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
+	"github.com/kalandramo/bald/log"
+	"github.com/stretchr/testify/assert"
 )
 
 // requireService skips the test when running in -short mode to keep hermetic runs green.

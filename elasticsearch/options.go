@@ -6,7 +6,7 @@ import (
 
 	"github.com/elastic/elastic-transport-go/v8/elastictransport"
 	elasticsearchV9 "github.com/elastic/go-elasticsearch/v9"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 )
 
 type Option func(o *Client)

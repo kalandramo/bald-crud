@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 	"go.opentelemetry.io/otel/attribute"
 	semconv "go.opentelemetry.io/otel/semconv/v1.30.0"
 	"go.opentelemetry.io/otel/trace"

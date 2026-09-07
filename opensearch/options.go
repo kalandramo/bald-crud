@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/kalandramo/bald/log"
 	"github.com/opensearch-project/opensearch-go/v4/opensearchtransport"
 	"github.com/opensearch-project/opensearch-go/v4/signer"
-	"github.com/tx7do/go-wind/log"
 )
 
 type Option func(o *Client)

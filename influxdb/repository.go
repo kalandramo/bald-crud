@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 

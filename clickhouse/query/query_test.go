@@ -3,8 +3,8 @@ package query
 import (
 	"testing"
 
+	"github.com/kalandramo/bald/log"
 	"github.com/stretchr/testify/assert"
-	"github.com/tx7do/go-wind/log"
 )
 
 func TestQueryBuilder(t *testing.T) {

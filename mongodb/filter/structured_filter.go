@@ -4,11 +4,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
 	bsonV2 "go.mongodb.org/mongo-driver/v2/bson"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/mongodb/query"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
 // StructuredFilter 将 FilterExpr 转为 MongoDB BSON filter 并应用到 *query.Builder
@@ -19,7 +20,7 @@ type StructuredFilter struct {
 
 func NewStructuredFilter() *StructuredFilter {
 	return &StructuredFilter{
-		codec:     encoding.GetCodec("json"),
+		codec:     jsoncodec.New(),
 		processor: NewProcessor(),
 	}
 }

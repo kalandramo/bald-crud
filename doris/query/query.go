@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/kalandramo/bald-utils/stringcase"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 )
 
 // Builder 用于构建 Doris SQL 查询
@@ -31,7 +31,7 @@ type Builder struct {
 }
 
 // NewQueryBuilder 创建一个新的 Builder 实例。logger 用于在该 builder 上启用
-// go-wind 全局日志（log.SetLogger）；传 nil 则不改变当前全局 logger。
+// bald 全局日志（log.SetLogger）；传 nil 则不改变当前全局 logger。
 func NewQueryBuilder(table string, logger log.Logger) *Builder {
 	if logger != nil {
 		log.SetLogger(logger)
@@ -65,7 +65,7 @@ func (qb *Builder) WithTableName(tableName string) *Builder {
 	return qb
 }
 
-// WithLogger 在该 builder 上启用 go-wind 全局日志（log.SetLogger）；
+// WithLogger 在该 builder 上启用 bald 全局日志（log.SetLogger）；
 // 传 nil 则不改变当前全局 logger。
 func (qb *Builder) WithLogger(logger log.Logger) *Builder {
 	if logger != nil {

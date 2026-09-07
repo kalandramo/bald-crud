@@ -6,11 +6,12 @@ import (
 	"strings"
 
 	"github.com/kalandramo/bald-utils/stringcase"
-	"github.com/tx7do/go-wind-plugins/encoding"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/clickhouse/query"
 	"github.com/kalandramo/bald-crud/pagination/filter"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
 var jsonKeyPattern = regexp.MustCompile(`^[A-Za-z0-9_.]+$`)
@@ -30,7 +31,7 @@ type Processor struct {
 
 func NewProcessor() *Processor {
 	return &Processor{
-		codec: encoding.GetCodec("json"),
+		codec: jsoncodec.New(),
 	}
 }
 

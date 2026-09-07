@@ -1,6 +1,6 @@
 module github.com/kalandramo/bald-crud/entgo
 
-go 1.26.5
+go 1.27.1
 
 replace github.com/kalandramo/bald-crud/pagination => ../pagination
 
@@ -20,11 +20,11 @@ require (
 	github.com/kalandramo/bald-utils/id v0.0.0-00010101000000-000000000000
 	github.com/kalandramo/bald-utils/mapper v0.0.0-00010101000000-000000000000
 	github.com/kalandramo/bald/bconf v0.0.0-00010101000000-000000000000
+	github.com/kalandramo/bald/encoding v0.0.0
+	github.com/kalandramo/bald/encoding/json v0.0.0-00010101000000-000000000000
+	github.com/kalandramo/bald/log v0.0.0-00010101000000-000000000000
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/stretchr/testify v1.11.1
-	github.com/tx7do/go-wind v0.0.2
-	github.com/tx7do/go-wind-plugins/encoding v0.0.1
-	github.com/tx7do/go-wind-plugins/encoding/json v0.0.1
 	github.com/xiaoqidun/entps v1.50.1
 	go.opentelemetry.io/otel v1.45.0
 	google.golang.org/protobuf v1.36.12
@@ -88,3 +88,9 @@ replace github.com/kalandramo/bald-utils => ../../bald-utils
 replace github.com/kalandramo/bald-utils/id => ../../bald-utils/id
 
 replace github.com/kalandramo/bald-utils/mapper => ../../bald-utils/mapper
+
+replace github.com/kalandramo/bald/log => ../../bald/log
+
+replace github.com/kalandramo/bald/encoding => ../../bald/encoding
+
+replace github.com/kalandramo/bald/encoding/json => ../../bald/encoding/json

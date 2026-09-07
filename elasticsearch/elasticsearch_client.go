@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 
 	elasticsearchV9 "github.com/elastic/go-elasticsearch/v9"
 	esapiV9 "github.com/elastic/go-elasticsearch/v9/esapi"

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/kalandramo/bald/log"
 	"github.com/redis/go-redis/v9"
-	"github.com/tx7do/go-wind/log"
 
 	"github.com/kalandramo/bald-utils/fieldmaskutil"
 	"github.com/kalandramo/bald-utils/mapper"
@@ -17,7 +17,6 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/cache"
 	"github.com/kalandramo/bald-crud/entgo/field"
 	"github.com/kalandramo/bald-crud/entgo/filter"
@@ -29,6 +28,7 @@ import (
 	paginationFilter "github.com/kalandramo/bald-crud/pagination/filter"
 	"github.com/kalandramo/bald-crud/pagination/paginator"
 	paginationSorting "github.com/kalandramo/bald-crud/pagination/sorting"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
 // Repository Ent查询器

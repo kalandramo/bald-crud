@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/InfluxCommunity/influxdb3-go/v2/influxdb3"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 )
 
 type Option func(o *Client)

@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/kalandramo/bald-utils/stringcase"
-	"github.com/tx7do/go-wind-plugins/encoding"
-	_ "github.com/tx7do/go-wind-plugins/encoding/json"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/pagination"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
 const (
@@ -30,7 +30,7 @@ type QueryStringConverter struct {
 
 func NewQueryStringConverter() *QueryStringConverter {
 	return &QueryStringConverter{
-		codec: encoding.GetCodec("json"),
+		codec: jsoncodec.New(),
 	}
 }
 

@@ -7,13 +7,13 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
-	_ "github.com/tx7do/go-wind-plugins/encoding/json"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
 
 	"github.com/kalandramo/bald-utils/stringcase"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/pagination/filter"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
 // escapeSQLString 对 SQL 字面量做最小转义，双写单引号并转义反斜杠，降低注入风险。
@@ -33,7 +33,7 @@ type Processor struct {
 
 func NewProcessor() *Processor {
 	return &Processor{
-		codec: encoding.GetCodec("json"),
+		codec: jsoncodec.New(),
 	}
 }
 

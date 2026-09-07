@@ -4,7 +4,8 @@ import (
 	"strings"
 
 	"github.com/kalandramo/bald-crud/opensearch/query"
-	"github.com/tx7do/go-wind-plugins/encoding"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
@@ -19,7 +20,7 @@ type StructuredFilter struct {
 
 func NewStructuredFilter() *StructuredFilter {
 	return &StructuredFilter{
-		codec:     encoding.GetCodec("json"),
+		codec:     jsoncodec.New(),
 		processor: NewProcessor(),
 	}
 }

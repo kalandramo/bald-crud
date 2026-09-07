@@ -8,8 +8,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
-	_ "github.com/tx7do/go-wind-plugins/encoding/json"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
 
 	"github.com/kalandramo/bald-utils/stringcase"
 
@@ -49,7 +49,7 @@ type Processor struct {
 // NewProcessor 返回带 json codec 的 Processor
 func NewProcessor() *Processor {
 	return &Processor{
-		codec: encoding.GetCodec("json"),
+		codec: jsoncodec.New(),
 	}
 }
 

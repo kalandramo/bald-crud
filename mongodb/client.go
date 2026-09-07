@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 
 	mongoV2 "go.mongodb.org/mongo-driver/v2/mongo"
 	optionsV2 "go.mongodb.org/mongo-driver/v2/mongo/options"

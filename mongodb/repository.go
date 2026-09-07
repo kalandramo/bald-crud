@@ -6,10 +6,9 @@ import (
 	"fmt"
 
 	"github.com/kalandramo/bald-utils/mapper"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/mongodb/field"
 	"github.com/kalandramo/bald-crud/mongodb/filter"
 	paging "github.com/kalandramo/bald-crud/mongodb/pagination"
@@ -19,6 +18,7 @@ import (
 	"github.com/kalandramo/bald-crud/pagination/paginator"
 	paginationSorting "github.com/kalandramo/bald-crud/pagination/sorting"
 	"github.com/kalandramo/bald-crud/viewer"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 
 	bsonV2 "go.mongodb.org/mongo-driver/v2/bson"
 	optionsV2 "go.mongodb.org/mongo-driver/v2/mongo/options"

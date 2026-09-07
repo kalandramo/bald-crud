@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/kalandramo/bald-utils/trans"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"go.mongodb.org/mongo-driver/v2/bson"

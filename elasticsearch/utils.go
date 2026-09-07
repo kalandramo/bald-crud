@@ -8,9 +8,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
-	_ "github.com/tx7do/go-wind-plugins/encoding/json"
-	"github.com/tx7do/go-wind/log"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
+	"github.com/kalandramo/bald/log"
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
@@ -29,7 +28,7 @@ func ParseErrorMessage(body io.ReadCloser) (*ErrorResponse, error) {
 
 // MergeOptions 合并 Elasticsearch 索引的映射和设置
 func MergeOptions(mapping, settings string) (string, error) {
-	codec := encoding.GetCodec("json")
+	codec := jsoncodec.New()
 
 	body := make(map[string]any)
 
@@ -130,7 +129,7 @@ func stringifyQueryValue(v any) string {
 }
 
 func ParseQueryString(query string) []string {
-	codec := encoding.GetCodec("json")
+	codec := jsoncodec.New()
 
 	var err error
 	queryMap := make(map[string]any)

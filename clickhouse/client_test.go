@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kalandramo/bald/log"
 	"github.com/stretchr/testify/assert"
-	"github.com/tx7do/go-wind/log"
 )
 
 type Candle struct {

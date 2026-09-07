@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gocql/gocql"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 )
 
 // Client wraps a gocql.Session. It applies connection configuration supplied

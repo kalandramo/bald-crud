@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/kalandramo/bald-crud/mongodb/query"
 	"github.com/kalandramo/bald-utils/mapper"
 	"github.com/kalandramo/bald-utils/trans"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
+	"github.com/stretchr/testify/assert"
 	bsonV2 "go.mongodb.org/mongo-driver/v2/bson"
 
 	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"

@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kalandramo/bald/log"
 	"github.com/stretchr/testify/assert"
-	"github.com/tx7do/go-wind/log"
 )
 
 // requireService skips the test when running in -short mode to keep hermetic runs green.

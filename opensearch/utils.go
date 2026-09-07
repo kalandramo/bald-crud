@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
-	_ "github.com/tx7do/go-wind-plugins/encoding/json"
-	"github.com/tx7do/go-wind/log"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
+	"github.com/kalandramo/bald/log"
 )
 
 // ParseErrorMessage 解析 Elasticsearch 错误消息
@@ -25,7 +24,7 @@ func ParseErrorMessage(body io.ReadCloser) (*ErrorResponse, error) {
 
 // MergeOptions 合并 Elasticsearch 索引的映射和设置
 func MergeOptions(mapping, settings string) (string, error) {
-	codec := encoding.GetCodec("json")
+	codec := jsoncodec.New()
 
 	body := make(map[string]any)
 
@@ -64,4 +63,3 @@ func MergeOptions(mapping, settings string) (string, error) {
 
 	return string(bodyBytes), nil
 }
-

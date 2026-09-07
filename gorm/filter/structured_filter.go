@@ -7,9 +7,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
-	_ "github.com/tx7do/go-wind-plugins/encoding/json"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
+	"github.com/kalandramo/bald/log"
 
 	"github.com/kalandramo/bald-utils/stringcase"
 
@@ -24,7 +24,7 @@ type StructuredFilter struct {
 
 func NewStructuredFilter() *StructuredFilter {
 	return &StructuredFilter{
-		codec:     encoding.GetCodec("json"),
+		codec:     jsoncodec.New(),
 		processor: NewProcessor(),
 	}
 }

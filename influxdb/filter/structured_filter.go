@@ -3,10 +3,11 @@ package filter
 import (
 	"strings"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/influxdb/query"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
 // StructuredFilter 将 FilterExpr 转为基于 InfluxDB 的 查询条件，使用 Processor 在 *query.Builder 上追加 WHERE 子句
@@ -18,7 +19,7 @@ type StructuredFilter struct {
 // NewStructuredFilter 创建 InfluxDB 用的 StructuredFilter
 func NewStructuredFilter() *StructuredFilter {
 	return &StructuredFilter{
-		codec:     encoding.GetCodec("json"),
+		codec:     jsoncodec.New(),
 		processor: NewProcessor(),
 	}
 }

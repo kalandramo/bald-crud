@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
+	"github.com/kalandramo/bald/log"
 
 	"github.com/kalandramo/bald-utils/stringcase"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/doris/query"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 )
 
 // StructuredFilter 基于 FilterExpr 的 Doris 过滤器（不依赖 GORM）
@@ -22,7 +23,7 @@ type StructuredFilter struct {
 
 func NewStructuredFilter() *StructuredFilter {
 	return &StructuredFilter{
-		codec:     encoding.GetCodec("json"),
+		codec:     jsoncodec.New(),
 		processor: NewProcessor(),
 	}
 }

@@ -866,7 +866,7 @@ go test -v ./doris -run TestStreamLoad
 - `github.com/jmoiron/sqlx` - SQL 扩展库
 - `github.com/kalandramo/bald-utils/mapper` - DTO/Entity 映射
 - `github.com/kalandramo/bald/bconf` - Protobuf 定义
-- `github.com/tx7do/go-wind` - go-wind 框架（日志）
+- `github.com/kalandramo/bald/log` - bald 日志框架
 
 ---
 

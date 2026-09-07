@@ -710,7 +710,7 @@ go test -v ./mongodb -run TestClient
 - `go.mongodb.org/mongo-driver/v2` - MongoDB Go 驱动（v2）
 - `github.com/kalandramo/bald-utils/mapper` - DTO/Document 映射
 - `github.com/kalandramo/bald/bconf` - Protobuf 定义
-- `github.com/tx7do/go-wind` - go-wind 框架（日志）
+- `github.com/kalandramo/bald/log` - bald 日志框架
 
 ---
 

@@ -8,18 +8,18 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 
 	opensearchV4 "github.com/opensearch-project/opensearch-go/v4"
 	opensearchapiV4 "github.com/opensearch-project/opensearch-go/v4/opensearchapi"
 
-	"github.com/tx7do/go-wind-plugins/encoding"
-	_ "github.com/tx7do/go-wind-plugins/encoding/json"
+	"github.com/kalandramo/bald/encoding"
+	jsoncodec "github.com/kalandramo/bald/encoding/json"
 
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	paginationFilter "github.com/kalandramo/bald-crud/pagination/filter"
 	"github.com/kalandramo/bald-crud/pagination/paginator"
 	paginationSorting "github.com/kalandramo/bald-crud/pagination/sorting"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 
 	"github.com/kalandramo/bald-crud/opensearch/field"
 	"github.com/kalandramo/bald-crud/opensearch/filter"
@@ -49,7 +49,7 @@ func NewOpenSearchClient(opts ...Option) (*Client, error) {
 	c := &Client{
 		options: &opensearchV4.Config{},
 
-		codec: encoding.GetCodec("json"),
+		codec: jsoncodec.New(),
 
 		structuredSorting: sorting.NewStructuredSorting(),
 

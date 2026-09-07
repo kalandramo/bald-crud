@@ -1,13 +1,18 @@
 module github.com/kalandramo/bald-crud/cassandra
 
-go 1.26.5
+go 1.27.1
 
 replace github.com/kalandramo/bald-crud => ../
 
+replace github.com/kalandramo/bald/log => ../../bald/log
+
+replace github.com/kalandramo/bald/berrors => ../../bald/berrors
+
 require (
 	github.com/gocql/gocql v1.7.0
+	github.com/kalandramo/bald/berrors v0.0.0-00010101000000-000000000000
+	github.com/kalandramo/bald/log v0.0.0-00010101000000-000000000000
 	github.com/stretchr/testify v1.11.1
-	github.com/tx7do/go-wind v0.0.2
 )
 
 require (

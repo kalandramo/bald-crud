@@ -1,3 +1,3 @@
 module github.com/kalandramo/bald-crud/audit
 
-go 1.26.5
+go 1.27.1

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tx7do/go-wind/log"
+	"github.com/kalandramo/bald/log"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

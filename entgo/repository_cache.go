@@ -11,12 +11,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/redis/go-redis/v9"
-	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
 	"github.com/kalandramo/bald-crud/cache"
 	"github.com/kalandramo/bald-crud/pagination"
 	"github.com/kalandramo/bald-crud/viewer"
-	"github.com/tx7do/go-wind/log"
+	storev1 "github.com/kalandramo/bald/bconf/gen/go/bald/store/v1"
+	"github.com/kalandramo/bald/log"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )

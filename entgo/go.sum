@@ -79,14 +79,10 @@ github.com/segmentio/ksuid v1.0.4 h1:sBo2BdShXjmcugAMwjugoGUdUV0pcxY5mW4xKRn3v4c
 github.com/segmentio/ksuid v1.0.4/go.mod h1:/XUiZBD3kVx5SmUOl55voK5yeAbBNNIed+2O73XgrPE=
 github.com/sony/sonyflake v1.3.0 h1:tiB4Dlp0lnmKp/h6BLXA14P8Qi+LYS9+0QRpcrKHvg4=
 github.com/sony/sonyflake v1.3.0/go.mod h1:LORtCywH/cq10ZbyfhKrHYgAUGH7mOBa76enV9txy/Y=
+github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
+github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-github.com/tx7do/go-wind v0.0.2 h1:kuI2QpwGacfROQpugPFWIcrtztv7qwFwQ4ts+LTsq2k=
-github.com/tx7do/go-wind v0.0.2/go.mod h1:BgeqjCLtGfTlT709176kd2KuLq7I1Am9tqQBrzYssc0=
-github.com/tx7do/go-wind-plugins/encoding v0.0.1 h1:JAFl2LU5/6VBE8WgZvJjEaAD4BDhstS2nhuUC9GrzM4=
-github.com/tx7do/go-wind-plugins/encoding v0.0.1/go.mod h1:kD3i5H3DaENxuz3eAYvOc6fZbTfUy7h+u5XqOzVWdIE=
-github.com/tx7do/go-wind-plugins/encoding/json v0.0.1 h1:9TBvf41xmxtvIT5oyX0wLYWfJziSMkq1uQ25mXTMby8=
-github.com/tx7do/go-wind-plugins/encoding/json v0.0.1/go.mod h1:NYVdkUteSngetTUiDIaInR6PpR5KR8C0XFG4UA8UvlQ=
 github.com/xiaoqidun/entps v1.50.1 h1:gfDySWjgByraSfjAz3h8eSWKrj96OFd0qlav8HTZmDc=
 github.com/xiaoqidun/entps v1.50.1/go.mod h1:L7662NwPEeia9jQIAVLX8teEc0viX7+zH5c2AusXlOw=
 github.com/yuin/gopher-lua v1.1.2 h1:yF/FjE3hD65tBbt0VXLE13HWS9h34fdzJmrWRXwobGA=
@@ -142,6 +138,8 @@ google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1 h1:bBRl1b0OH9s/DuPhuXpNl+VtCaJXFZ5/uEFST95x9zc=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1/go.mod h1:YD8tP3GAjkrDg1eZH7EGmyESg/lsYskCTPBJVb9jqSc=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gotest.tools/v3 v3.5.2 h1:7koQfIKdy+I8UTetycgUqXWSDwpgv193Ka+qRsmBY8Q=

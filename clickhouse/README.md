@@ -799,7 +799,7 @@ go test -v ./clickhouse -run TestBatch
 - `github.com/ClickHouse/clickhouse-go/v2` - ClickHouse Go 客户端
 - `github.com/kalandramo/bald-utils/mapper` - DTO/Entity 映射
 - `github.com/kalandramo/bald/bconf` - Protobuf 定义
-- `github.com/tx7do/go-wind` - go-wind 框架（日志）
+- `github.com/kalandramo/bald/log` - bald 日志框架
 
 ---
 
