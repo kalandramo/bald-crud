@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat-square&logo=Go" alt="Go Version" />
+  <img src="https://img.shields.io/badge/Go-1.27+-00ADD8?style=flat-square&logo=Go" alt="Go Version" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square" alt="PRs Welcome" />
   <img src="https://pkg.go.dev/badge/github.com/kalandramo/bald-crud.svg" alt="Go Reference" />

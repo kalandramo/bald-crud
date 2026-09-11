@@ -3,8 +3,9 @@
 # - 多模块仓库（根 + 13 子模块），无 matrix 预发现 job——shell 循环即可，
 #   模块增删零维护。
 # - go 版本写死与各 go.mod 对齐（go-version-file 仅适用单模块仓库）。
-# - 集成测试约定：无外部服务时自动 skip（testing.Short() / 服务的
-#   不可达探测，见各引擎 client_test.go），CI 无服务容器也能全量跑；
+# - 集成测试约定：go test -short 跳过集成测试（各引擎 client_test 的
+#   testing.Short() 保护）；elasticsearch 的 repository 测试无保护
+#   （tx7do 迁移残留，硬连真实 ES），-short 是 CI 全绿的必要条件；
 #   引擎真连验证属发布前手工步骤。
 name: ci
 
@@ -35,5 +36,5 @@ jobs:
           set -e
           for mod in $(find . -name go.mod -not -path "./.git/*" | xargs -n1 dirname | sort); do
             echo "=== $mod ==="
-            (cd "$mod" && go build ./... && go vet ./... && go test ./...)
+            (cd "$mod" && go build ./... && go vet ./... && go test -short ./...)
           done
