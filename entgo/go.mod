@@ -2,27 +2,21 @@ module github.com/kalandramo/bald-crud/entgo
 
 go 1.27.1
 
-replace github.com/kalandramo/bald-crud/pagination => ../pagination
-
-replace github.com/kalandramo/bald-crud/audit => ../audit
-
-replace github.com/kalandramo/bald-crud/viewer => ../viewer
-
 require (
 	entgo.io/ent v0.14.6
 	github.com/XSAM/otelsql v0.43.0
 	github.com/google/uuid v1.6.0
-	github.com/kalandramo/bald-crud/audit v0.0.2
-	github.com/kalandramo/bald-crud/cache v0.0.1
-	github.com/kalandramo/bald-crud/pagination v0.0.15
-	github.com/kalandramo/bald-crud/viewer v0.0.6
-	github.com/kalandramo/bald-utils v1.1.38
-	github.com/kalandramo/bald-utils/id v0.0.0-00010101000000-000000000000
-	github.com/kalandramo/bald-utils/mapper v0.0.0-00010101000000-000000000000
-	github.com/kalandramo/bald/bconf v0.0.0-00010101000000-000000000000
-	github.com/kalandramo/bald/encoding v0.0.0
-	github.com/kalandramo/bald/encoding/json v0.0.0-00010101000000-000000000000
-	github.com/kalandramo/bald/log v0.0.0-00010101000000-000000000000
+	github.com/kalandramo/bald-crud/audit v0.1.0
+	github.com/kalandramo/bald-crud/cache v0.1.0
+	github.com/kalandramo/bald-crud/pagination v0.1.0
+	github.com/kalandramo/bald-crud/viewer v0.1.0
+	github.com/kalandramo/bald-utils v0.1.0
+	github.com/kalandramo/bald-utils/id v0.1.0
+	github.com/kalandramo/bald-utils/mapper v0.1.0
+	github.com/kalandramo/bald/bconf v0.1.0
+	github.com/kalandramo/bald/encoding v0.1.0
+	github.com/kalandramo/bald/encoding/json v0.1.0
+	github.com/kalandramo/bald/log v0.1.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/stretchr/testify v1.11.1
 	github.com/xiaoqidun/entps v1.50.1
@@ -76,21 +70,3 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 	modernc.org/sqlite v1.50.1 // indirect
 )
-
-replace github.com/kalandramo/bald-crud => ../
-
-replace github.com/kalandramo/bald-crud/cache => ../cache
-
-replace github.com/kalandramo/bald/bconf => ../../bald/bconf
-
-replace github.com/kalandramo/bald-utils => ../../bald-utils
-
-replace github.com/kalandramo/bald-utils/id => ../../bald-utils/id
-
-replace github.com/kalandramo/bald-utils/mapper => ../../bald-utils/mapper
-
-replace github.com/kalandramo/bald/log => ../../bald/log
-
-replace github.com/kalandramo/bald/encoding => ../../bald/encoding
-
-replace github.com/kalandramo/bald/encoding/json => ../../bald/encoding/json
