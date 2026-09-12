@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/kalandramo/bald-crud/influxdb/query"
 )
 
 // normalizeQuery 消除多过滤条件因 map 遍历顺序带来的 AND 子句顺序抖动：
@@ -118,9 +120,10 @@ func TestBuildQueryWithParams(t *testing.T) {
 		expectedQuery string
 	}{
 		{
+			// CD1 后契约：value 传原始值，格式化（引号/转义）由 query.FormatValue 负责
 			name:          "Basic query with filters and fields",
 			table:         "candles",
-			filters:       map[string]any{"s": "'AAPL'", "o": 150.0},
+			filters:       map[string]any{"s": "AAPL", "o": 150.0},
 			operators:     map[string]string{"o": ">"},
 			fields:        []string{"s", "o", "h", "l", "c", "v"},
 			expectedQuery: "SELECT s, o, h, l, c, v FROM candles WHERE s = 'AAPL' AND o > 150",
@@ -136,7 +139,7 @@ func TestBuildQueryWithParams(t *testing.T) {
 		{
 			name:          "Query with no fields",
 			table:         "candles",
-			filters:       map[string]any{"s": "'AAPL'"},
+			filters:       map[string]any{"s": "AAPL"},
 			operators:     map[string]string{},
 			fields:        []string{},
 			expectedQuery: "SELECT * FROM candles WHERE s = 'AAPL'",
@@ -144,26 +147,37 @@ func TestBuildQueryWithParams(t *testing.T) {
 		{
 			name:          "Empty table name",
 			table:         "",
-			filters:       map[string]any{"s": "'AAPL'"},
+			filters:       map[string]any{"s": "AAPL"},
 			operators:     map[string]string{},
 			fields:        []string{"s", "o"},
 			expectedQuery: "SELECT s, o FROM  WHERE s = 'AAPL'",
 		},
 		{
+			// CD1 后：单引号被转义——原测试把未转义的 'O'Reilly'（注入演示）当期望行为
 			name:          "Special characters in filters",
 			table:         "candles",
-			filters:       map[string]any{"name": "'O'Reilly'"},
+			filters:       map[string]any{"name": "O'Reilly"},
 			operators:     map[string]string{},
 			fields:        []string{"name"},
-			expectedQuery: "SELECT name FROM candles WHERE name = 'O'Reilly'",
+			expectedQuery: "SELECT name FROM candles WHERE name = 'O\\'Reilly'",
 		},
 		{
+			// CD1 后：裸表达式须显式 query.RawValue 包装（默认安全 + 显式豁免）
 			name:          "Query with interval filters",
 			table:         "candles",
-			filters:       map[string]any{"time": "now() - interval '15 minutes'"},
+			filters:       map[string]any{"time": query.RawValue("now() - interval '15 minutes'")},
 			operators:     map[string]string{"time": ">="},
 			fields:        []string{"*"},
 			expectedQuery: "SELECT * FROM candles WHERE time >= now() - interval '15 minutes'",
+		},
+		{
+			// CD1 新增：注入防护——恶意值被引号包裹转义，查询结构不可被改写
+			name:          "Injection attempt is neutralized",
+			table:         "candles",
+			filters:       map[string]any{"s": "AAPL' AND 1=1; DROP MEASUREMENT candles; --"},
+			operators:     map[string]string{},
+			fields:        []string{"*"},
+			expectedQuery: "SELECT * FROM candles WHERE s = 'AAPL\\' AND 1=1; DROP MEASUREMENT candles; --'",
 		},
 	}
 

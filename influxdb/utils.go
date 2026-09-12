@@ -10,6 +10,7 @@ import (
 
 	"github.com/InfluxCommunity/influxdb3-go/v2/influxdb3"
 	"github.com/kalandramo/bald-utils/stringcase"
+	"github.com/kalandramo/bald-crud/influxdb/query"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -204,12 +205,29 @@ func BuildQueryWithParams(
 			if op, exists := operators[key]; exists {
 				operator = op
 			}
-			conditions = append(conditions, fmt.Sprintf("%s %s %v", key, operator, value))
+			// CD1 修复：operator 白名单（对齐 query.Builder 支持集），key 去空白；
+			// value 走 query.FormatValue 安全格式化——原 %v 裸拼是注入面
+			// （值含引号/分号即改写查询语义），安全实现 query.FormatValue 一直
+			// 存在但未接线。
+			if !validOperator(operator) {
+				return ""
+			}
+			conditions = append(conditions, fmt.Sprintf("%s %s %s",
+				strings.TrimSpace(key), operator, query.FormatValue(value)))
 		}
 		queryBuilder.WriteString(strings.Join(conditions, " AND "))
 	}
 
 	return queryBuilder.String()
+}
+
+// validOperator 校验操作符白名单（与 query.Builder.WhereFromMaps 支持集对齐）。
+func validOperator(op string) bool {
+	switch strings.ToLower(strings.TrimSpace(op)) {
+	case "=", "!=", ">", ">=", "<", "<=", "in", "regex", "=~", "!~":
+		return true
+	}
+	return false
 }
 
 // ConvertAnyToPointsSafe 将 []any 逐元素断言为 []*influxdb3.Point
