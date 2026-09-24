@@ -95,7 +95,7 @@ func enforceTenantOnBatchItem[ENTITY any](ctx context.Context, rv reflect.Value,
 			return err
 		}
 		if dec.Enforce {
-			m["tenant_id"] = uint32(dec.TenantID)
+			m["tenant_id"] = dec.TenantID
 		}
 		return nil
 	case reflect.Struct:

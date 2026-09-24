@@ -28,6 +28,6 @@ func (User) Fields() []ent.Field {
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID{},
 	}
 }

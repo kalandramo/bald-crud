@@ -102,6 +102,6 @@ func setTenantIDOnCreate(ctx context.Context, sch *schema.Schema, reflectValue r
 		return nil
 	}
 	// 强制覆盖：普通用户无法为自己指定他租户
-	tid := uint32(dec.TenantID)
+	tid := dec.TenantID
 	return tf.Set(ctx, reflectValue, tid)
 }

@@ -18,7 +18,7 @@ import (
 //
 // 不在钩子中强制不可变性（ent 的 Immutable 在 GORM 中需在业务层或更复杂的钩子中处理）。
 type TenantID struct {
-	TenantID *uint32 `gorm:"column:tenant_id;type:int unsigned;index" json:"tenant_id,omitempty"`
+	TenantID *string `gorm:"column:tenant_id;type:varchar(64);index" json:"tenant_id,omitempty"`
 }
 
 // BeforeCreate 在创建记录前执行租户强制：租户业务视图下覆盖 tenant_id。

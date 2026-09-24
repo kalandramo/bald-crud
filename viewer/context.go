@@ -8,8 +8,13 @@ type Context interface {
 	// UserID 返回当前用户ID
 	UserID() uint64
 
-	// TenantID 返回租户ID
-	TenantID() uint64
+	// TenantID 返回租户ID。
+	//
+	// 类型为 string（2026-09-24 统一）：空串表示「无租户上下文」＝平台视图。
+	// 此前为 uint64，用 0 同时表达「平台视图」与「非数字租户 ID 解析失败」，
+	// 导致后者被静默误判为平台视图而跳过租户强制（安全失效）。string 无解析
+	// 失败路径，语义单一。
+	TenantID() string
 
 	// OrgUnitID 返回当前身份挂载的组织单元 ID
 	OrgUnitID() uint64
@@ -29,10 +34,10 @@ type Context interface {
 	// HasPermission 判断是否具有某个动作/资源的权限（如 "update:user"）
 	HasPermission(action, resource string) bool
 
-	// IsPlatformContext 当前是否处于平台管理视图（tenant_id == 0）
+	// IsPlatformContext 当前是否处于平台管理视图（无租户上下文，TenantID == ""）
 	IsPlatformContext() bool
 
-	// IsTenantContext 当前是否处于租户业务视图（tenant_id > 0）
+	// IsTenantContext 当前是否处于租户业务视图（TenantID != ""）
 	IsTenantContext() bool
 
 	// IsSystemContext 判断是否为系统后台任务

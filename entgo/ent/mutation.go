@@ -657,8 +657,7 @@ type UserMutation struct {
 	op            Op
 	typ           string
 	id            *uint32
-	tenant_id     *uint32
-	addtenant_id  *int32
+	tenant_id     *string
 	name          *string
 	age           *uint32
 	addage        *int32
@@ -773,13 +772,12 @@ func (m *UserMutation) IDs(ctx context.Context) ([]uint32, error) {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (m *UserMutation) SetTenantID(u uint32) {
-	m.tenant_id = &u
-	m.addtenant_id = nil
+func (m *UserMutation) SetTenantID(s string) {
+	m.tenant_id = &s
 }
 
 // TenantID returns the value of the "tenant_id" field in the mutation.
-func (m *UserMutation) TenantID() (r uint32, exists bool) {
+func (m *UserMutation) TenantID() (r string, exists bool) {
 	v := m.tenant_id
 	if v == nil {
 		return
@@ -790,7 +788,7 @@ func (m *UserMutation) TenantID() (r uint32, exists bool) {
 // OldTenantID returns the old "tenant_id" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+func (m *UserMutation) OldTenantID(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
 	}
@@ -804,28 +802,9 @@ func (m *UserMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
 	return oldValue.TenantID, nil
 }
 
-// AddTenantID adds u to the "tenant_id" field.
-func (m *UserMutation) AddTenantID(u int32) {
-	if m.addtenant_id != nil {
-		*m.addtenant_id += u
-	} else {
-		m.addtenant_id = &u
-	}
-}
-
-// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
-func (m *UserMutation) AddedTenantID() (r int32, exists bool) {
-	v := m.addtenant_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ClearTenantID clears the value of the "tenant_id" field.
 func (m *UserMutation) ClearTenantID() {
 	m.tenant_id = nil
-	m.addtenant_id = nil
 	m.clearedFields[user.FieldTenantID] = struct{}{}
 }
 
@@ -838,7 +817,6 @@ func (m *UserMutation) TenantIDCleared() bool {
 // ResetTenantID resets all changes to the "tenant_id" field.
 func (m *UserMutation) ResetTenantID() {
 	m.tenant_id = nil
-	m.addtenant_id = nil
 	delete(m.clearedFields, user.FieldTenantID)
 }
 
@@ -1017,7 +995,7 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 func (m *UserMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case user.FieldTenantID:
-		v, ok := value.(uint32)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1045,9 +1023,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *UserMutation) AddedFields() []string {
 	var fields []string
-	if m.addtenant_id != nil {
-		fields = append(fields, user.FieldTenantID)
-	}
 	if m.addage != nil {
 		fields = append(fields, user.FieldAge)
 	}
@@ -1059,8 +1034,6 @@ func (m *UserMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case user.FieldTenantID:
-		return m.AddedTenantID()
 	case user.FieldAge:
 		return m.AddedAge()
 	}
@@ -1072,13 +1045,6 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case user.FieldTenantID:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTenantID(v)
-		return nil
 	case user.FieldAge:
 		v, ok := value.(int32)
 		if !ok {

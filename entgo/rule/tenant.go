@@ -22,11 +22,16 @@ type (
 	}
 )
 
-type TenantPrivacy[T uint32 | uint64] struct {
+// TenantPrivacy 是 ent 的租户隔离隐私规则。
+//
+// 类型统一为 string（2026-09-24）：此前为 `TenantPrivacy[T uint32 | uint64]`，
+// 泛型参数仅用于 `T(vc.TenantID())` 的数值转换。viewer.Context.TenantID 改
+// string 后，转换消失，类型参数随之去除。
+type TenantPrivacy struct {
 	decision error
 }
 
-func (f TenantPrivacy[T]) EvalQuery(ctx context.Context, query ent.Query) error {
+func (f TenantPrivacy) EvalQuery(ctx context.Context, query ent.Query) error {
 	vc, exist := viewer.FromContext(ctx)
 	// 如果身份丢失，安全起见应直接拒绝操作（Deny），而不是跳过
 	if !exist {
@@ -40,14 +45,14 @@ func (f TenantPrivacy[T]) EvalQuery(ctx context.Context, query ent.Query) error 
 
 	tid := vc.TenantID()
 
-	if err := f.injectTenantWhere(query, T(tid)); err != nil {
+	if err := f.injectTenantWhere(query, tid); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (f TenantPrivacy[T]) EvalMutation(ctx context.Context, m ent.Mutation) error {
+func (f TenantPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist {
 		return fmt.Errorf("missing ViewerContext in context")
@@ -65,13 +70,13 @@ func (f TenantPrivacy[T]) EvalMutation(ctx context.Context, m ent.Mutation) erro
 		}
 		if val, set := m.Field("tenant_id"); set {
 			if old, ok := m.(interface {
-				OldTenantID(context.Context) (*T, error)
+				OldTenantID(context.Context) (*string, error)
 			}); ok {
 				prev, err := old.OldTenantID(ctx)
 				if err != nil {
 					return fmt.Errorf("security: tenant rule cannot verify tenant_id change: %w", err)
 				}
-				viewerTid := fmt.Sprint(T(vc.TenantID()))
+				viewerTid := vc.TenantID()
 				if prev == nil || fmt.Sprint(*prev) != fmt.Sprint(val) || viewerTid != fmt.Sprint(val) {
 					return fmt.Errorf("security: cross-tenant tenant_id change denied")
 				}
@@ -85,18 +90,18 @@ func (f TenantPrivacy[T]) EvalMutation(ctx context.Context, m ent.Mutation) erro
 	tid := vc.TenantID()
 
 	if vc.IsPlatformContext() {
-		// 如果管理员在代码里写了 .SetTenantID(101)，则尊重管理员的选择
+		// 如果管理员在代码里写了 .SetTenantID("101")，则尊重管理员的选择
 		if _, set := m.Field("tenant_id"); set {
 			return nil
 		}
-		// 如果管理员没设置，且当前上下文也没指定目标租户，则按管理员逻辑执行（可能设为 0）
+		// 如果管理员没设置，且当前上下文也没指定目标租户，则按管理员逻辑执行
 		return nil
 	}
 
 	// 普通用户：强制覆盖，防止越权
 	// 优先使用强类型接口（生成代码常见）
-	if s, ok := m.(interface{ SetTenantID(T) }); ok {
-		s.SetTenantID(T(tid))
+	if s, ok := m.(interface{ SetTenantID(string) }); ok {
+		s.SetTenantID(tid)
 		return nil
 	}
 
@@ -116,7 +121,7 @@ func (f TenantPrivacy[T]) EvalMutation(ctx context.Context, m ent.Mutation) erro
 
 // injectTenantWhere 尝试通过反射在 query 上调用 Where\(...\) 并注入 tenant_id 过滤。
 // 返回可能被 Where 链式调用替换后的 ent.Query（若 Where 返回链式值）。
-func (f TenantPrivacy[T]) injectTenantWhere(query ent.Query, tenantID T) error {
+func (f TenantPrivacy) injectTenantWhere(query ent.Query, tenantID string) error {
 	rv := reflect.ValueOf(query)
 	mf := rv.MethodByName("Where")
 	if !mf.IsValid() || mf.Kind() != reflect.Func {
@@ -198,7 +203,7 @@ func InjectTenantWhereIntoBuilder[ENTITY any](ctx context.Context, builder any) 
 
 // injectTenantWhereReflect 是 InjectTenantWhereIntoBuilder 的反射核心，
 // 与 TenantPrivacy.injectTenantWhere 同构，区别仅在于目标对象不是 ent.Query。
-func injectTenantWhereReflect(builder any, tenantID uint64) error {
+func injectTenantWhereReflect(builder any, tenantID string) error {
 	if builder == nil {
 		return nil
 	}

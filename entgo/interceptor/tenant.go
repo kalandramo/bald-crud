@@ -38,7 +38,7 @@ func TenantInterceptor() ent.Interceptor {
 
 // injectTenantWhere 尝试通过反射在 query 上调用 Where\(...\) 并注入 tenant_id 过滤。
 // 返回可能被 Where 链式调用替换后的 ent.Query（若 Where 返回链式值）。
-func injectTenantWhere(query ent.Query, tenantID uint64) error {
+func injectTenantWhere(query ent.Query, tenantID string) error {
 	rv := reflect.ValueOf(query)
 	mf := rv.MethodByName("Where")
 	if !mf.IsValid() || mf.Kind() != reflect.Func {

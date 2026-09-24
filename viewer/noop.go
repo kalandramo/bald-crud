@@ -4,7 +4,7 @@ package viewer
 type noopContext struct{}
 
 func (noopContext) UserID() uint64                 { return 0 }
-func (noopContext) TenantID() uint64               { return 0 }
+func (noopContext) TenantID() string               { return "" }
 func (noopContext) OrgUnitID() uint64              { return 0 }
 func (noopContext) Permissions() []string          { return nil }
 func (noopContext) Roles() []string                { return nil }

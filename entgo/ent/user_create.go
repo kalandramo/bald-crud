@@ -22,13 +22,13 @@ type UserCreate struct {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *UserCreate) SetTenantID(v uint32) *UserCreate {
+func (_c *UserCreate) SetTenantID(v string) *UserCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *UserCreate) SetNillableTenantID(v *uint32) *UserCreate {
+func (_c *UserCreate) SetNillableTenantID(v *string) *UserCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -161,7 +161,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(user.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(user.FieldTenantID, field.TypeString, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {

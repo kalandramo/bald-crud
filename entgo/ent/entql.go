@@ -43,7 +43,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "User",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			user.FieldTenantID: {Type: field.TypeUint32, Column: user.FieldTenantID},
+			user.FieldTenantID: {Type: field.TypeString, Column: user.FieldTenantID},
 			user.FieldName:     {Type: field.TypeString, Column: user.FieldName},
 			user.FieldAge:      {Type: field.TypeUint32, Column: user.FieldAge},
 		},
@@ -204,8 +204,8 @@ func (f *UserFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(user.FieldID))
 }
 
-// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
-func (f *UserFilter) WhereTenantID(p entql.Uint32P) {
+// WhereTenantID applies the entql string predicate on the tenant_id field.
+func (f *UserFilter) WhereTenantID(p entql.StringP) {
 	f.Where(p.Field(user.FieldTenantID))
 }
 

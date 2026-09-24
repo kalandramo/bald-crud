@@ -38,7 +38,7 @@ import (
 // 创建一个简单的 Viewer Context（需要实现 viewer.Context 接口）
 type myViewerContext struct {
     userID      uint64
-    tenantID    uint64
+    tenantID    string
     orgUnitID   uint64
     permissions []string
     roles       []string
@@ -47,7 +47,7 @@ type myViewerContext struct {
 }
 
 func (c *myViewerContext) UserID() uint64                 { return c.userID }
-func (c *myViewerContext) TenantID() uint64               { return c.tenantID }
+func (c *myViewerContext) TenantID() string               { return c.tenantID }
 func (c *myViewerContext) OrgUnitID() uint64              { return c.orgUnitID }
 func (c *myViewerContext) Permissions() []string          { return c.permissions }
 func (c *myViewerContext) Roles() []string                { return c.roles }
@@ -112,7 +112,7 @@ vc := viewer.MustFromContext(ctx)
 
 // 使用 Viewer Context
 userID := vc.UserID()
-tenantID := vc.TenantID()
+tenantID := vc.TenantID()  // string
 ```
 
 ---
@@ -241,7 +241,7 @@ if vc.IsPlatformContext() {
 // 判断是否为租户业务视图（tenant_id > 0）
 if vc.IsTenantContext() {
     // 租户用户只能查看自己租户的数据
-    tenantID := vc.TenantID()
+    tenantID := vc.TenantID()  // string
     fmt.Printf("Tenant view: tenant_id = %d\n", tenantID)
     
     // 自动添加租户过滤条件
@@ -308,7 +308,7 @@ fmt.Println(vc.ShouldAudit())    // false
 type Context interface {
     // 身份标识
     UserID() uint64      // 当前用户ID
-    TenantID() uint64    // 租户ID
+    TenantID() string    // 租户ID（2026-09-24 起统一 string）
     OrgUnitID() uint64   // 组织单元ID
     
     // 权限与角色
@@ -594,7 +594,7 @@ func (r *Repository[DTO, ENTITY]) ListWithPaging(ctx context.Context, req *store
     return r.executeList(ctx, req)
 }
 
-func addTenantFilter(expr *storev1.FilterExpr, tenantID uint64) *storev1.FilterExpr {
+func addTenantFilter(expr *storev1.FilterExpr, tenantID string) *storev1.FilterExpr {
     if expr == nil {
         expr = &storev1.FilterExpr{}
     }
@@ -672,7 +672,7 @@ if vc.IsPlatformContext() {
     fmt.Println("Platform admin: no tenant filter")
 } else if vc.IsTenantContext() {
     // 租户用户：只能查看自己租户的数据
-    tenantID := vc.TenantID()
+    tenantID := vc.TenantID()  // string
     filter := fmt.Sprintf("tenant_id = %d", tenantID)
     fmt.Printf("Tenant user: %s\n", filter)
 }
@@ -1196,11 +1196,11 @@ if vc.IsPlatformContext() {
 ```go
 type mockViewerContext struct {
     userID   uint64
-    tenantID uint64
+    tenantID string
 }
 
 func (m *mockViewerContext) UserID() uint64                 { return m.userID }
-func (m *mockViewerContext) TenantID() uint64               { return m.tenantID }
+func (m *mockViewerContext) TenantID() string               { return m.tenantID }
 func (m *mockViewerContext) OrgUnitID() uint64              { return 0 }
 func (m *mockViewerContext) Permissions() []string          { return []string{"read:user"} }
 func (m *mockViewerContext) Roles() []string                { return []string{"admin"} }

@@ -8,25 +8,26 @@ import (
 	"github.com/kalandramo/bald-crud/entgo/rule"
 )
 
-type TenantID[IDT uint32 | uint64] struct{ mixin.Schema }
+// TenantID 是租户隔离的 ent mixin。
+//
+// 类型统一为 string（2026-09-24）：此前为 `TenantID[IDT uint32 | uint64]` 的
+// 伪泛型——`IDT` 仅传给 rule.TenantPrivacy，字段硬编码 `field.Uint32`，实际只
+// 支持 uint32。现去掉未使用的类型参数，字段统一 `field.String`，与 bald 生态
+// （contextx/authn/jwt/audit 全为 string）对齐，并消除「非数字租户 ID 解析失败
+// 被静默当作平台视图」的安全隐患。
+type TenantID struct{ mixin.Schema }
 
-func (TenantID[IDT]) Fields() []ent.Field {
+func (TenantID) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("tenant_id").
+		field.String("tenant_id").
 			Comment("租户ID").
 			Immutable().
-			Default(0).
+			Default("").
 			Nillable().
 			Optional(),
 	}
 }
 
-func (TenantID[IDT]) Policy() ent.Policy {
-	return rule.TenantPrivacy[IDT]{}
+func (TenantID) Policy() ent.Policy {
+	return rule.TenantPrivacy{}
 }
-
-//func (TenantID[IDT]) Interceptors() []ent.Interceptor {
-//	return []ent.Interceptor{
-//		interceptor.TenantInterceptor(),
-//	}
-//}

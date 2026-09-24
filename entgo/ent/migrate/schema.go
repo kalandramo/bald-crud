@@ -11,7 +11,7 @@ var (
 	// MenusColumns holds the columns for the "menus" table.
 	MenusColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
-		{Name: "path", Type: field.TypeString, Nullable: true, Size: 1024},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512},
 		{Name: "name", Type: field.TypeString},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true},
 	}
@@ -32,7 +32,7 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "tenant_id", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "name", Type: field.TypeString},
 		{Name: "age", Type: field.TypeUint32, Default: 0},
 	}

@@ -12,14 +12,14 @@ import (
 //
 // 实现 viewer.ScopedModel 标记接口供 repository 类型断言识别（无需反射检测）。
 type TenantID struct {
-	TenantID *uint32 `bson:"tenant_id,omitempty" json:"tenant_id,omitempty"`
+	TenantID *string `bson:"tenant_id,omitempty" json:"tenant_id,omitempty"`
 }
 
 // GetTenantID 实现 viewer.ScopedModel。
-func (m *TenantID) GetTenantID() *uint32 { return m.TenantID }
+func (m *TenantID) GetTenantID() *string { return m.TenantID }
 
 // SetTenantID 实现 viewer.ScopedModel，供 Create 路径强制注入。
-func (m *TenantID) SetTenantID(tid uint32) {
+func (m *TenantID) SetTenantID(tid string) {
 	v := tid
 	m.TenantID = &v
 }

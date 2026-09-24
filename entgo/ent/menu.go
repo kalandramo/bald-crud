@@ -19,11 +19,7 @@ type Menu struct {
 	ID uint32 `json:"id,omitempty"`
 	// 父节点ID
 	ParentID *uint32 `json:"parent_id,omitempty"`
-	// 树路径，规范：
-	// - 根节点: "/"
-	// - 非根节点: "/1/2/3/"（以 "/" 开头且以 "/" 结尾）
-	// - 禁止空字符串（NULL 表示未设置）
-	// - 示例: "/", "/101/", "/101/202/303/"
+	// 树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。
 	Path *string `json:"path,omitempty"`
 	// menu name
 	Name string `json:"name,omitempty"`
