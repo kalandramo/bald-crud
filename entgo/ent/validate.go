@@ -30,3 +30,21 @@ func IsValidFieldPath(path string) bool {
 	}
 	return true
 }
+
+// CheckColumn 报告 column 是否存在于已注册白名单的表 table 中。
+//
+// 这是 ent.go（生成代码）中私有 checkColumn 的**导出别名**——手写的
+// field / filter / sorting 三包在进入 SQL 构建器之前用它做列白名单校验。
+// 委托而非复制：白名单注册表（menu / user 的 Table + ValidColumn）只有一份
+// 真相源，生成代码与手写代码不会各自判断而漂移。
+//
+// 返回值语义是**契约**，调用方依赖它区分两种拒绝：
+//   - 表未注册 → 错误含 "unknown table" → 调用方 **fail-open**（保留字段，
+//     保持无白名单时的旧行为，避免误伤非 ent 管理的表）
+//   - 表已注册但列不存在 → 错误含 "unknown column" → 调用方 **拒绝**该字段
+//
+// 该文本由 entgo.io/ent 的 sql.NewColumnCheck 产生，不由本包控制——
+// 故有 TestCheckColumn_UnknownTable 钉住它。
+func CheckColumn(table, column string) error {
+	return checkColumn(table, column)
+}
