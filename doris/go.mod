@@ -7,7 +7,7 @@ require (
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/kalandramo/bald-crud/pagination v0.1.0
-	github.com/kalandramo/bald-crud/viewer v0.1.0
+	github.com/kalandramo/bald-crud/viewer v0.2.0
 	github.com/kalandramo/bald-utils v0.1.0
 	github.com/kalandramo/bald-utils/mapper v0.1.0
 	github.com/kalandramo/bald/bconf v0.1.0

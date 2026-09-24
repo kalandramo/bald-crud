@@ -11,6 +11,8 @@ github.com/kalandramo/bald-crud/pagination v0.1.0 h1:6TscsGZnBw5+rrm9qP2fQ6iVkKo
 github.com/kalandramo/bald-crud/pagination v0.1.0/go.mod h1:c2B0pfIF+l/yKn21CipOJnOQEVZBgOycgJkaJsox6XM=
 github.com/kalandramo/bald-crud/viewer v0.1.0 h1:Trtt0xJt88NS1KZQRqbhL094tQA4sFxFWfoJRSFlvK4=
 github.com/kalandramo/bald-crud/viewer v0.1.0/go.mod h1:GOiEuYYRKRgOr4bp4Oww+1d6A9n4McTq9ObPTNjBe5g=
+github.com/kalandramo/bald-crud/viewer v0.2.0 h1:EbnoeJ7EFAd1T6RG0uwBtiaz5/t3bgAau/DcRB7DS0U=
+github.com/kalandramo/bald-crud/viewer v0.2.0/go.mod h1:GOiEuYYRKRgOr4bp4Oww+1d6A9n4McTq9ObPTNjBe5g=
 github.com/kalandramo/bald-utils v0.1.0 h1:i6ABFLXVYm24uDhE3yynyaKzcX/fQSMVguHwglsYk6Q=
 github.com/kalandramo/bald-utils v0.1.0/go.mod h1:wic8d3DLxiDMeJHTpSqCrYzTQLBzmuZQXRG6/EPrSW8=
 github.com/kalandramo/bald-utils/mapper v0.1.0 h1:SWW/VCzfk3gTU3t5KLLIUutCUlIFYzZ6LIZTEPvki0w=
