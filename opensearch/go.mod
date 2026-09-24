@@ -2,16 +2,14 @@ module github.com/kalandramo/bald-crud/opensearch
 
 go 1.27.1
 
-replace github.com/kalandramo/bald-crud/pagination => ../pagination
-
 require (
-	github.com/kalandramo/bald-crud/pagination v0.0.15
-	github.com/kalandramo/bald-utils v0.0.0-00010101000000-000000000000
-	github.com/kalandramo/bald/bconf v0.0.0-00010101000000-000000000000
-	github.com/kalandramo/bald/berrors v0.0.0-00010101000000-000000000000
-	github.com/kalandramo/bald/encoding v0.0.0
-	github.com/kalandramo/bald/encoding/json v0.0.0-00010101000000-000000000000
-	github.com/kalandramo/bald/log v0.0.0-00010101000000-000000000000
+	github.com/kalandramo/bald-crud/pagination v0.1.0
+	github.com/kalandramo/bald-utils v0.1.0
+	github.com/kalandramo/bald/bconf v0.1.0
+	github.com/kalandramo/bald/berrors v0.1.0
+	github.com/kalandramo/bald/encoding v0.1.0
+	github.com/kalandramo/bald/encoding/json v0.1.0
+	github.com/kalandramo/bald/log v0.1.0
 	github.com/opensearch-project/opensearch-go/v4 v4.7.3
 	github.com/stretchr/testify v1.11.1
 	google.golang.org/protobuf v1.36.12
@@ -29,17 +27,3 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260904194346-d0f1323225a4 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/kalandramo/bald-crud => ../
-
-replace github.com/kalandramo/bald/bconf => ../../bald/bconf
-
-replace github.com/kalandramo/bald-utils => ../../bald-utils
-
-replace github.com/kalandramo/bald/log => ../../bald/log
-
-replace github.com/kalandramo/bald/berrors => ../../bald/berrors
-
-replace github.com/kalandramo/bald/encoding => ../../bald/encoding
-
-replace github.com/kalandramo/bald/encoding/json => ../../bald/encoding/json

@@ -266,7 +266,9 @@ func (c *Client) initGormClient() error {
 
 	// 注册读写分离
 	if c.enableDbResolver {
-		masterDriver := createDriver(c.masterDSN, c.masterDSN)
+		// CD2 修复：首参应为 driverName——原误传 masterDSN，非默认驱动名
+		// （如 "pgx"）时 master Dialector 构造即错，读写分离静默失效。
+		masterDriver := createDriver(c.driverName, c.masterDSN)
 
 		var replicaDrivers []gorm.Dialector
 		for _, replicaDSN := range c.replicaDsns {

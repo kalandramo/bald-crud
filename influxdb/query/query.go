@@ -85,27 +85,27 @@ func (qb *Builder) WhereFromMaps(filters map[string]any, operators map[string]st
 		var expr string
 		switch op {
 		case "=", "eq":
-			expr = fmt.Sprintf("%s = %s", k, formatValue(v))
+			expr = fmt.Sprintf("%s = %s", k, FormatValue(v))
 		case "!=", "ne":
-			expr = fmt.Sprintf("%s != %s", k, formatValue(v))
+			expr = fmt.Sprintf("%s != %s", k, FormatValue(v))
 		case ">", "gt":
-			expr = fmt.Sprintf("%s > %s", k, formatValue(v))
+			expr = fmt.Sprintf("%s > %s", k, FormatValue(v))
 		case ">=", "gte":
-			expr = fmt.Sprintf("%s >= %s", k, formatValue(v))
+			expr = fmt.Sprintf("%s >= %s", k, FormatValue(v))
 		case "<", "lt":
-			expr = fmt.Sprintf("%s < %s", k, formatValue(v))
+			expr = fmt.Sprintf("%s < %s", k, FormatValue(v))
 		case "<=", "lte":
-			expr = fmt.Sprintf("%s <= %s", k, formatValue(v))
+			expr = fmt.Sprintf("%s <= %s", k, FormatValue(v))
 		case "in":
-			// formatValue 对 slice 会返回 "(a,b,c)"
-			expr = fmt.Sprintf("%s IN %s", k, formatValue(v))
+			// FormatValue 对 slice 会返回 "(a,b,c)"
+			expr = fmt.Sprintf("%s IN %s", k, FormatValue(v))
 		case "regex", "re", "=~":
 			// 使用正则匹配，确保传入的是字符串或能被格式化为字符串
 			// formatRegex wraps value into /.../
 			expr = fmt.Sprintf("%s =~ %s", k, formatRegex(v))
 		default:
 			// fallback to equals
-			expr = fmt.Sprintf("%s = %s", k, formatValue(v))
+			expr = fmt.Sprintf("%s = %s", k, FormatValue(v))
 		}
 		qb.where = append(qb.where, expr)
 	}

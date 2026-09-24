@@ -337,6 +337,7 @@ func (r *Repository[
 	whereSelectors, err = r.structuredFilter.BuildSelectors(filterExpr)
 	if err != nil {
 		log.Error(context.Background(), fmt.Sprintf("build structured filter selectors failed: %s", err.Error()))
+		return nil, nil, err // CD4：过滤条件构建失败 fail-closed（静默丢过滤=数据越权返回）
 	}
 
 	if whereSelectors != nil {
@@ -348,6 +349,9 @@ func (r *Repository[
 		selectSelector, err = r.fieldSelector.BuildSelector(req.GetFieldMask().GetPaths())
 		if err != nil {
 			log.Error(context.Background(), fmt.Sprintf("build field select selector failed: %s", err.Error()))
+			// CD4 修复：fail-closed——字段过滤构建失败静默降级为全字段返回
+			// 属数据完整性问题（调用方明确要列裁剪却拿到全量）。
+			return nil, nil, err
 		}
 	}
 	if selectSelector != nil {
@@ -359,6 +363,7 @@ func (r *Repository[
 		sortingSelector, err = r.structuredSorting.BuildSelector(req.GetSorting())
 		if err != nil {
 			log.Error(context.Background(), fmt.Sprintf("build structured sorting selector failed: %s", err.Error()))
+			return nil, nil, err // CD4：排序构建失败 fail-closed（静默丢排序=错误结果集）
 		}
 	} else if len(req.GetOrderBy()) > 0 {
 		var sortings []*storev1.Sorting
@@ -371,6 +376,7 @@ func (r *Repository[
 		sortingSelector, err = r.structuredSorting.BuildSelector(sortings)
 		if err != nil {
 			log.Error(context.Background(), fmt.Sprintf("build query string sorting selector failed: %s", err.Error()))
+			return nil, nil, err // CD4：同上 fail-closed
 		}
 	}
 	if sortingSelector != nil {
@@ -579,6 +585,7 @@ func (r *Repository[
 	whereSelectors, err = r.structuredFilter.BuildSelectors(filterExpr)
 	if err != nil {
 		log.Error(context.Background(), fmt.Sprintf("build structured filter selectors failed: %s", err.Error()))
+		return nil, nil, err // CD4：过滤条件构建失败 fail-closed（静默丢过滤=数据越权返回）
 	}
 
 	// select fields
@@ -586,6 +593,9 @@ func (r *Repository[
 		selectSelector, err = r.fieldSelector.BuildSelector(req.GetFieldMask().GetPaths())
 		if err != nil {
 			log.Error(context.Background(), fmt.Sprintf("build field select selector failed: %s", err.Error()))
+			// CD4 修复：fail-closed——字段过滤构建失败静默降级为全字段返回
+			// 属数据完整性问题（调用方明确要列裁剪却拿到全量）。
+			return nil, nil, err
 		}
 	}
 	if selectSelector != nil {
@@ -597,6 +607,7 @@ func (r *Repository[
 		sortingSelector, err = r.structuredSorting.BuildSelector(req.GetSorting())
 		if err != nil {
 			log.Error(context.Background(), fmt.Sprintf("build structured sorting selector failed: %s", err.Error()))
+			return nil, nil, err // CD4：排序构建失败 fail-closed（静默丢排序=错误结果集）
 		}
 	} else if len(req.GetOrderBy()) > 0 {
 		var sortings []*storev1.Sorting
@@ -609,6 +620,7 @@ func (r *Repository[
 		sortingSelector, err = r.structuredSorting.BuildSelector(sortings)
 		if err != nil {
 			log.Error(context.Background(), fmt.Sprintf("build query string sorting selector failed: %s", err.Error()))
+			return nil, nil, err // CD4：同上 fail-closed
 		}
 	}
 	if sortingSelector != nil {
