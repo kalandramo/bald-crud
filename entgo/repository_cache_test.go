@@ -14,21 +14,21 @@ import (
 // stubViewer 用于测试的可配置 viewer 上下文
 type stubViewer struct {
 	userID   uint64
-	tenantID uint64
+	tenantID string
 	orgID    uint64
 	scopes   []viewer.DataScope
 }
 
 func (s stubViewer) UserID() uint64                 { return s.userID }
-func (s stubViewer) TenantID() uint64               { return s.tenantID }
+func (s stubViewer) TenantID() string               { return s.tenantID }
 func (s stubViewer) OrgUnitID() uint64              { return s.orgID }
 func (s stubViewer) Permissions() []string          { return nil }
 func (s stubViewer) Roles() []string                { return nil }
 func (s stubViewer) DataScope() []viewer.DataScope  { return s.scopes }
 func (s stubViewer) TraceID() string                { return "" }
 func (s stubViewer) HasPermission(_, _ string) bool { return false }
-func (s stubViewer) IsPlatformContext() bool        { return s.tenantID == 0 }
-func (s stubViewer) IsTenantContext() bool          { return s.tenantID > 0 }
+func (s stubViewer) IsPlatformContext() bool        { return s.tenantID == "" }
+func (s stubViewer) IsTenantContext() bool          { return s.tenantID != "" }
 func (s stubViewer) IsSystemContext() bool          { return false }
 func (s stubViewer) ShouldAudit() bool              { return false }
 
@@ -47,7 +47,7 @@ func TestRepositoryCache(t *testing.T) {
 
 	// generateCacheKey 含租户、用户与 viewMask 维度段 "t:<tid>:u:<uid>:m:<mask>:"。
 	key := repo.generateCacheKey(viewer.NewNoopContext(), 123, nil)
-	assert.Equal(t, "test:t:0:u:0:m:all:id:123", key)
+	assert.Equal(t, "test:t::u:0:m:all:id:123", key)
 
 	// 不同 viewMask（返回字段不同）不得共享缓存。
 	keyMaskA := repo.generateCacheKey(viewer.NewNoopContext(), 123, nil)
@@ -55,8 +55,8 @@ func TestRepositoryCache(t *testing.T) {
 	assert.NotEqual(t, keyMaskA, keyMaskB)
 
 	// 不同租户对同一 id 应产生不同 key（跨租户隔离）。
-	keyTenantA := repo.generateCacheKey(stubViewer{tenantID: 1}, 123, nil)
-	keyTenantB := repo.generateCacheKey(stubViewer{tenantID: 2}, 123, nil)
+	keyTenantA := repo.generateCacheKey(stubViewer{tenantID: "t-1"}, 123, nil)
+	keyTenantB := repo.generateCacheKey(stubViewer{tenantID: "t-2"}, 123, nil)
 	assert.NotEqual(t, keyTenantA, keyTenantB)
 
 	// generateListCacheKey 按租户、用户、数据范围隔离。
@@ -64,23 +64,23 @@ func TestRepositoryCache(t *testing.T) {
 		Page:     uint32Ptr(1),
 		PageSize: uint32Ptr(10),
 	}
-	keyListA, err := repo.generateListCacheKey(stubViewer{tenantID: 1}, req)
+	keyListA, err := repo.generateListCacheKey(stubViewer{tenantID: "t-1"}, req)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, keyListA)
-	keyListB, err := repo.generateListCacheKey(stubViewer{tenantID: 2}, req)
+	keyListB, err := repo.generateListCacheKey(stubViewer{tenantID: "t-2"}, req)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, keyListB)
 	assert.NotEqual(t, keyListA, keyListB)
 
 	// 同租户下，不同 DataScope（SELF vs ALL）的相同查询不得共享缓存。
 	keySelf, err := repo.generateListCacheKey(stubViewer{
-		tenantID: 1,
+		tenantID: "t-1",
 		userID:   10,
 		scopes:   []viewer.DataScope{{ScopeType: viewer.ScopeTypeSelf}},
 	}, req)
 	assert.NoError(t, err)
 	keyAll, err := repo.generateListCacheKey(stubViewer{
-		tenantID: 1,
+		tenantID: "t-1",
 		userID:   10,
 		scopes:   []viewer.DataScope{{ScopeType: viewer.ScopeTypeAll}},
 	}, req)
@@ -101,7 +101,7 @@ func TestGenerateListCacheKeyFromPagination_TokenBranch(t *testing.T) {
 		any, any, any,
 	](nil)
 	repo.cacheKeyPrefix = "test:"
-	vc := stubViewer{tenantID: 1, userID: 10}
+	vc := stubViewer{tenantID: "t-1", userID: 10}
 
 	mkReq := func(token string, size uint32) *storev1.PaginationRequest {
 		return &storev1.PaginationRequest{

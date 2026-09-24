@@ -76,7 +76,7 @@ func escapeScanPattern(s string) string {
 // （隐私规则可能对同一行返回不同结果）、不同字段掩码的缓存互不串扰。
 // 示例: "user:t:42:u:7:m:hash123:id:123"
 func (r *Repository[DTO, ENTITY]) generateCacheKey(vc viewer.Context, id any, viewMask *fieldmaskpb.FieldMask) string {
-	return fmt.Sprintf("%st:%d:u:%d:m:%s:id:%v",
+	return fmt.Sprintf("%st:%s:u:%d:m:%s:id:%v",
 		r.cacheKeyPrefix, vc.TenantID(), vc.UserID(), viewMaskFingerprint(viewMask), id)
 }
 
@@ -91,7 +91,7 @@ func (r *Repository[DTO, ENTITY]) generateListCacheKey(vc viewer.Context, req *s
 
 	var sig strings.Builder
 	sig.WriteString(r.cacheKeyPrefix)
-	sig.WriteString(fmt.Sprintf("t:%d:u:%d:ou:%d:", vc.TenantID(), vc.UserID(), vc.OrgUnitID()))
+	sig.WriteString(fmt.Sprintf("t:%s:u:%d:ou:%d:", vc.TenantID(), vc.UserID(), vc.OrgUnitID()))
 	for _, ds := range vc.DataScope() {
 		sig.WriteString(fmt.Sprintf("ds:%s:%v:", ds.ScopeType, ds.TargetIDs))
 	}

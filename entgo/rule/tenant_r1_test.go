@@ -41,13 +41,13 @@ func (*badSigBuilder) SetTenantID(uint32)    {}
 
 // stubQueryViewer 实现 viewer.Context，可配置 tenant/platform/system。
 type stubQueryViewer struct {
-	tid      uint64
+	tid      string
 	platform bool
 	system   bool
 }
 
 func (s *stubQueryViewer) UserID() uint64                 { return 0 }
-func (s *stubQueryViewer) TenantID() uint64               { return s.tid }
+func (s *stubQueryViewer) TenantID() string               { return s.tid }
 func (s *stubQueryViewer) OrgUnitID() uint64              { return 0 }
 func (s *stubQueryViewer) Permissions() []string          { return nil }
 func (s *stubQueryViewer) Roles() []string                { return nil }
@@ -55,14 +55,14 @@ func (s *stubQueryViewer) DataScope() []viewer.DataScope  { return nil }
 func (s *stubQueryViewer) TraceID() string                { return "" }
 func (s *stubQueryViewer) HasPermission(_, _ string) bool { return false }
 func (s *stubQueryViewer) IsPlatformContext() bool        { return s.platform }
-func (s *stubQueryViewer) IsTenantContext() bool          { return s.tid > 0 && !s.platform }
+func (s *stubQueryViewer) IsTenantContext() bool          { return s.tid != "" && !s.platform }
 func (s *stubQueryViewer) IsSystemContext() bool          { return s.system }
 func (s *stubQueryViewer) ShouldAudit() bool              { return false }
 
 // TestInjectTenantWhereIntoBuilder_TenantContextInjects 验证租户业务视图下
 // Where 被调用注入 tenant_id 谓词（闭合 R-1 写侧行级缺口）。
 func TestInjectTenantWhereIntoBuilder_TenantContextInjects(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), &stubQueryViewer{tid: 7})
+	ctx := viewer.WithContext(context.Background(), &stubQueryViewer{tid: "t-7"})
 	b := &stubUpdateBuilder{}
 	if err := InjectTenantWhereIntoBuilder[stubUpdateBuilder](ctx, b); err != nil {
 		t.Fatalf("inject: %v", err)
@@ -77,7 +77,7 @@ func TestInjectTenantWhereIntoBuilder_TenantContextInjects(t *testing.T) {
 
 // TestInjectTenantWhereIntoBuilder_PlatformContextSkips 平台视图不注入。
 func TestInjectTenantWhereIntoBuilder_PlatformContextSkips(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), &stubQueryViewer{tid: 0, platform: true})
+	ctx := viewer.WithContext(context.Background(), &stubQueryViewer{tid: "t-0", platform: true})
 	b := &stubUpdateBuilder{}
 	if err := InjectTenantWhereIntoBuilder[stubUpdateBuilder](ctx, b); err != nil {
 		t.Fatalf("inject: %v", err)
@@ -102,7 +102,7 @@ func TestInjectTenantWhereIntoBuilder_MissingViewerFailClosed(t *testing.T) {
 // TestInjectTenantWhereIntoBuilder_NonTenantBuilderSkips 非 tenant-scoped
 // 类型（struct{} 不实现 ScopedModel）经类型门控直接放行，不报错、不注入。
 func TestInjectTenantWhereIntoBuilder_NonTenantBuilderSkips(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), &stubQueryViewer{tid: 7})
+	ctx := viewer.WithContext(context.Background(), &stubQueryViewer{tid: "t-7"})
 	// 非 tenant-scoped：struct{} 不实现 viewer.ScopedModel → 类型门控放行
 	err := InjectTenantWhereIntoBuilder[struct{}](ctx, struct{}{})
 	if err != nil {
@@ -114,7 +114,7 @@ func TestInjectTenantWhereIntoBuilder_NonTenantBuilderSkips(t *testing.T) {
 // 类型但 Where 签名不符（模拟 ent 升级改签名）时必须 fail-closed 报错，
 // 而非静默跳过。这是 B.10 的回归测试：签名失配 = 注入失败 = 拒绝。
 func TestInjectTenantWhereIntoBuilder_BadSignatureFailsClosed(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), &stubQueryViewer{tid: 7})
+	ctx := viewer.WithContext(context.Background(), &stubQueryViewer{tid: "t-7"})
 	b := &badSigBuilder{}
 	// badSigBuilder 实现 ScopedModel（过类型门控）但 Where 签名不符
 	err := InjectTenantWhereIntoBuilder[badSigBuilder](ctx, b)

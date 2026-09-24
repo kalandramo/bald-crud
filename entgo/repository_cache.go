@@ -99,7 +99,7 @@ func (r *Repository[
 	ENT_DELETE,
 	PREDICATE, DTO, ENTITY,
 ]) generateCacheKey(vc viewer.Context, id any, viewMask *fieldmaskpb.FieldMask) string {
-	return fmt.Sprintf("%st:%d:u:%d:m:%s:id:%v",
+	return fmt.Sprintf("%st:%s:u:%d:m:%s:id:%v",
 		r.cacheKeyPrefix, vc.TenantID(), vc.UserID(), viewMaskFingerprint(viewMask), id)
 }
 
@@ -120,7 +120,7 @@ func (r *Repository[
 	sig.WriteString(r.cacheKeyPrefix)
 	// 租户 + 访问者身份维度：数据权限（SELF/UNIT/USER/ALL 等）作用于查询结果，
 	// 缺少该维度会导致同租户下不同权限用户共享缓存，造成越权读到他人数据。
-	sig.WriteString(fmt.Sprintf("t:%d:u:%d:ou:%d:", vc.TenantID(), vc.UserID(), vc.OrgUnitID()))
+	sig.WriteString(fmt.Sprintf("t:%s:u:%d:ou:%d:", vc.TenantID(), vc.UserID(), vc.OrgUnitID()))
 	for _, ds := range vc.DataScope() {
 		sig.WriteString(fmt.Sprintf("ds:%s:%v:", ds.ScopeType, ds.TargetIDs))
 	}
@@ -192,7 +192,7 @@ func (r *Repository[
 	var sig strings.Builder
 	sig.WriteString(r.cacheKeyPrefix)
 	// 租户 + 访问者身份维度（同 generateListCacheKey）
-	sig.WriteString(fmt.Sprintf("t:%d:u:%d:ou:%d:", vc.TenantID(), vc.UserID(), vc.OrgUnitID()))
+	sig.WriteString(fmt.Sprintf("t:%s:u:%d:ou:%d:", vc.TenantID(), vc.UserID(), vc.OrgUnitID()))
 	for _, ds := range vc.DataScope() {
 		sig.WriteString(fmt.Sprintf("ds:%s:%v:", ds.ScopeType, ds.TargetIDs))
 	}

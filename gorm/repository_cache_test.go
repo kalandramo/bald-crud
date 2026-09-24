@@ -78,21 +78,21 @@ func TestRepository_WithCache(t *testing.T) {
 // gormStubViewer 用于缓存 key 测试的可配置 viewer
 type gormStubViewer struct {
 	userID   uint64
-	tenantID uint64
+	tenantID string
 	orgID    uint64
 	scopes   []viewer.DataScope
 }
 
 func (s gormStubViewer) UserID() uint64                 { return s.userID }
-func (s gormStubViewer) TenantID() uint64               { return s.tenantID }
+func (s gormStubViewer) TenantID() string               { return s.tenantID }
 func (s gormStubViewer) OrgUnitID() uint64              { return s.orgID }
 func (s gormStubViewer) Permissions() []string          { return nil }
 func (s gormStubViewer) Roles() []string                { return nil }
 func (s gormStubViewer) DataScope() []viewer.DataScope  { return s.scopes }
 func (s gormStubViewer) TraceID() string                { return "" }
 func (s gormStubViewer) HasPermission(_, _ string) bool { return false }
-func (s gormStubViewer) IsPlatformContext() bool        { return s.tenantID == 0 }
-func (s gormStubViewer) IsTenantContext() bool          { return s.tenantID > 0 }
+func (s gormStubViewer) IsPlatformContext() bool        { return s.tenantID == "" }
+func (s gormStubViewer) IsTenantContext() bool          { return s.tenantID != "" }
 func (s gormStubViewer) IsSystemContext() bool          { return false }
 func (s gormStubViewer) ShouldAudit() bool              { return false }
 
@@ -104,21 +104,21 @@ func TestRepository_generateCacheKey(t *testing.T) {
 
 	// 缓存 key 含租户、用户与 viewMask 维度段。
 	key := repo.generateCacheKey(viewer.NewNoopContext(), 123, nil)
-	assert.Equal(t, "user:t:0:u:0:m:all:id:123", key)
+	assert.Equal(t, "user:t::u:0:m:all:id:123", key)
 
 	key2 := repo.generateCacheKey(viewer.NewNoopContext(), "abc", nil)
-	assert.Equal(t, "user:t:0:u:0:m:all:id:abc", key2)
+	assert.Equal(t, "user:t::u:0:m:all:id:abc", key2)
 
 	// 不同租户对同一 id 应产生不同 key（跨租户隔离）
-	keyTenantA := repo.generateCacheKey(gormStubViewer{tenantID: 1}, 123, nil)
-	keyTenantB := repo.generateCacheKey(gormStubViewer{tenantID: 2}, 123, nil)
+	keyTenantA := repo.generateCacheKey(gormStubViewer{tenantID: "t-1"}, 123, nil)
+	keyTenantB := repo.generateCacheKey(gormStubViewer{tenantID: "t-2"}, 123, nil)
 	assert.NotEqual(t, keyTenantA, keyTenantB)
 
 	// 同租户不同用户、不同 viewMask 也不共享
-	keyUserA := repo.generateCacheKey(gormStubViewer{tenantID: 1, userID: 10}, 123, nil)
-	keyUserB := repo.generateCacheKey(gormStubViewer{tenantID: 1, userID: 20}, 123, nil)
+	keyUserA := repo.generateCacheKey(gormStubViewer{tenantID: "t-1", userID: 10}, 123, nil)
+	keyUserB := repo.generateCacheKey(gormStubViewer{tenantID: "t-1", userID: 20}, 123, nil)
 	assert.NotEqual(t, keyUserA, keyUserB)
-	keyMask := repo.generateCacheKey(gormStubViewer{tenantID: 1, userID: 10}, 123, &fieldmaskpb.FieldMask{Paths: []string{"name"}})
+	keyMask := repo.generateCacheKey(gormStubViewer{tenantID: "t-1", userID: 10}, 123, &fieldmaskpb.FieldMask{Paths: []string{"name"}})
 	assert.NotEqual(t, keyUserA, keyMask)
 }
 
@@ -162,19 +162,19 @@ func TestRepository_generateListCacheKey(t *testing.T) {
 	assert.NotEqual(t, key, key3)
 
 	// 跨租户隔离：相同查询参数在不同租户下应产生不同 key
-	keyTenantA, err := repo.generateListCacheKey(gormStubViewer{tenantID: 1}, req)
+	keyTenantA, err := repo.generateListCacheKey(gormStubViewer{tenantID: "t-1"}, req)
 	assert.NoError(t, err)
-	keyTenantB, err := repo.generateListCacheKey(gormStubViewer{tenantID: 2}, req)
+	keyTenantB, err := repo.generateListCacheKey(gormStubViewer{tenantID: "t-2"}, req)
 	assert.NoError(t, err)
 	assert.NotEqual(t, keyTenantA, keyTenantB)
 
 	// 同租户下不同 DataScope（SELF vs ALL）不得共享缓存
 	keySelf, err := repo.generateListCacheKey(gormStubViewer{
-		tenantID: 1, userID: 10, scopes: []viewer.DataScope{{ScopeType: viewer.ScopeTypeSelf}},
+		tenantID: "t-1", userID: 10, scopes: []viewer.DataScope{{ScopeType: viewer.ScopeTypeSelf}},
 	}, req)
 	assert.NoError(t, err)
 	keyAll, err := repo.generateListCacheKey(gormStubViewer{
-		tenantID: 1, userID: 10, scopes: []viewer.DataScope{{ScopeType: viewer.ScopeTypeAll}},
+		tenantID: "t-1", userID: 10, scopes: []viewer.DataScope{{ScopeType: viewer.ScopeTypeAll}},
 	}, req)
 	assert.NoError(t, err)
 	assert.NotEqual(t, keySelf, keyAll)
@@ -187,7 +187,7 @@ func TestRepository_generateListCacheKey_TokenVerifiedBeforeKeying(t *testing.T)
 	m := mapper.NewCopierMapper[CacheTestUser, testUserEntity]()
 	repo := NewRepository[CacheTestUser, testUserEntity](m)
 	repo.cacheKeyPrefix = "user:"
-	vc := gormStubViewer{tenantID: 1, userID: 10}
+	vc := gormStubViewer{tenantID: "t-1", userID: 10}
 
 	mkReq := func(token string) *storev1.PagingRequest {
 		tok := token

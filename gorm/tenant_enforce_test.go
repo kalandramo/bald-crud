@@ -42,27 +42,27 @@ func openTenantTestDB(t *testing.T) *gorm.DB {
 }
 
 // viewerCtx 构造一个指定租户的 viewer Context。
-func viewerCtx(tid uint64) context.Context {
+func viewerCtx(tid string) context.Context {
 	return viewer.WithContext(context.Background(), &stubViewer{tid: tid})
 }
 
-// platformViewerCtx 构造一个平台视图（tid==0）的 viewer Context。
+// platformViewerCtx 构造一个平台视图（tid==""）的 viewer Context。
 func platformViewerCtx() context.Context {
-	return viewer.WithContext(context.Background(), &stubViewer{tid: 0})
+	return viewer.WithContext(context.Background(), &stubViewer{tid: ""})
 }
 
-type stubViewer struct{ tid uint64 }
+type stubViewer struct{ tid string }
 
 func (s *stubViewer) UserID() uint64                 { return 0 }
-func (s *stubViewer) TenantID() uint64               { return s.tid }
+func (s *stubViewer) TenantID() string               { return s.tid }
 func (s *stubViewer) OrgUnitID() uint64              { return 0 }
 func (s *stubViewer) Permissions() []string          { return nil }
 func (s *stubViewer) Roles() []string                { return nil }
 func (s *stubViewer) DataScope() []viewer.DataScope  { return nil }
 func (s *stubViewer) TraceID() string                { return "" }
 func (s *stubViewer) HasPermission(_, _ string) bool { return false }
-func (s *stubViewer) IsPlatformContext() bool        { return s.tid == 0 }
-func (s *stubViewer) IsTenantContext() bool          { return s.tid > 0 }
+func (s *stubViewer) IsPlatformContext() bool        { return s.tid == "" }
+func (s *stubViewer) IsTenantContext() bool          { return s.tid != "" }
 func (s *stubViewer) IsSystemContext() bool          { return false }
 func (s *stubViewer) ShouldAudit() bool              { return false }
 
@@ -70,7 +70,7 @@ func (s *stubViewer) ShouldAudit() bool              { return false }
 // tenant_id = ? 谓词。
 func TestTenantEnforce_QueryInjectsPredicate(t *testing.T) {
 	db := openTenantTestDB(t)
-	ctx := viewerCtx(7)
+	ctx := viewerCtx("t-7")
 
 	var out tenantTestEntity
 	tx := db.WithContext(ctx).Session(&gorm.Session{DryRun: true}).First(&out, 1)
@@ -86,7 +86,7 @@ func TestTenantEnforce_QueryInjectsPredicate(t *testing.T) {
 	}
 }
 
-// TestTenantEnforce_PlatformContextPassThrough 平台视图（tid==0）不注入谓词。
+// TestTenantEnforce_PlatformContextPassThrough 平台视图（tid==""）不注入谓词。
 func TestTenantEnforce_PlatformContextPassThrough(t *testing.T) {
 	db := openTenantTestDB(t)
 	ctx := platformViewerCtx()
@@ -117,10 +117,10 @@ func TestTenantEnforce_MissingViewerFailClosed(t *testing.T) {
 // tenant_id，即使实体设置了其他租户值也会被改写为当前 viewer 的租户。
 func TestTenantEnforce_CreateForcesTenantID(t *testing.T) {
 	db := openTenantTestDB(t)
-	ctx := viewerCtx(7)
+	ctx := viewerCtx("t-7")
 
 	bad := &tenantTestEntity{Name: "x"}
-	other := uint32(99)
+	other := "t-99"
 	// 通过 mixin 字段显式赋值他租户，验证强制覆盖
 	tenantField := &bad.TenantID // mixin.TenantID 嵌入实例
 	tenantField.TenantID = &other
@@ -133,7 +133,7 @@ func TestTenantEnforce_CreateForcesTenantID(t *testing.T) {
 		t.Fatalf("re-read: %v", err)
 	}
 	stored := got.TenantID.TenantID
-	if stored == nil || *stored != 7 {
-		t.Errorf("tenant_id must be force-set to 7, got %v", stored)
+	if stored == nil || *stored != "t-7" {
+		t.Errorf("tenant_id must be force-set to t-7, got %v", stored)
 	}
 }

@@ -125,7 +125,7 @@ func TestEntClient_Menu(t *testing.T) {
 type testContext struct{}
 
 func (testContext) UserID() uint64                 { return 0 }
-func (testContext) TenantID() uint64               { return 1 }
+func (testContext) TenantID() string               { return "t-1" }
 func (testContext) OrgUnitID() uint64              { return 0 }
 func (testContext) Permissions() []string          { return nil }
 func (testContext) Roles() []string                { return nil }

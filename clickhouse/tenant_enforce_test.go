@@ -22,13 +22,13 @@ type nonScopedEntity struct {
 }
 
 type testEnforceViewer struct {
-	tid      uint64
+	tid      string
 	platform bool
 	system   bool
 }
 
 func (v testEnforceViewer) UserID() uint64                 { return 0 }
-func (v testEnforceViewer) TenantID() uint64               { return v.tid }
+func (v testEnforceViewer) TenantID() string               { return v.tid }
 func (v testEnforceViewer) OrgUnitID() uint64              { return 0 }
 func (v testEnforceViewer) Permissions() []string          { return nil }
 func (v testEnforceViewer) Roles() []string                { return nil }
@@ -36,13 +36,13 @@ func (v testEnforceViewer) DataScope() []viewer.DataScope  { return nil }
 func (v testEnforceViewer) TraceID() string                { return "" }
 func (v testEnforceViewer) HasPermission(_, _ string) bool { return false }
 func (v testEnforceViewer) IsPlatformContext() bool        { return v.platform }
-func (v testEnforceViewer) IsTenantContext() bool          { return v.tid > 0 && !v.platform }
+func (v testEnforceViewer) IsTenantContext() bool          { return v.tid != "" && !v.platform }
 func (v testEnforceViewer) IsSystemContext() bool          { return v.system }
 func (v testEnforceViewer) ShouldAudit() bool              { return false }
 
 // TestInjectTenantFilter_TenantContextInjects 租户业务视图下注入 tenant_id 谓词。
 func TestInjectTenantFilter_TenantContextInjects(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 7})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-7"})
 	qb := query.NewQueryBuilder("t", nil)
 	if err := InjectTenantFilterIntoBuilder[scopedEntity](ctx, qb); err != nil {
 		t.Fatalf("inject: %v", err)
@@ -58,7 +58,7 @@ func TestInjectTenantFilter_TenantContextInjects(t *testing.T) {
 
 // TestInjectTenantFilter_PlatformContextSkips 平台视图不注入。
 func TestInjectTenantFilter_PlatformContextSkips(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 0, platform: true})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-0", platform: true})
 	qb := query.NewQueryBuilder("t", nil)
 	if err := InjectTenantFilterIntoBuilder[scopedEntity](ctx, qb); err != nil {
 		t.Fatalf("inject: %v", err)
@@ -83,7 +83,7 @@ func TestInjectTenantFilter_MissingViewerFailClosed(t *testing.T) {
 
 // TestInjectTenantFilter_NonScopedSkips 非 tenant 实体跳过。
 func TestInjectTenantFilter_NonScopedSkips(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 7})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-7"})
 	qb := query.NewQueryBuilder("t", nil)
 	err := InjectTenantFilterIntoBuilder[nonScopedEntity](ctx, qb)
 	if err != nil {
@@ -102,12 +102,12 @@ func TestInjectTenantFilter_NonScopedSkips(t *testing.T) {
 // Client.BatchInsert 现在通过 EnforceOnScopedInstanceAny 对每个指针元素
 // 在租户业务视图下强制覆盖 tenant_id。
 func TestEnforceOnScopedInstanceAny_StructForcesTenantID(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 42})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-42"})
 	ent := &scopedEntity{Name: "x"}
 	if err := viewer.EnforceOnScopedInstanceAny(ctx, ent); err != nil {
 		t.Fatalf("enforce: %v", err)
 	}
-	if ent.TenantID.TenantID == nil || *ent.TenantID.TenantID != 42 {
+	if ent.TenantID.TenantID == nil || *ent.TenantID.TenantID != "t-42" {
 		t.Errorf("must force-set tenant_id to 42, got %v", ent.TenantID.TenantID)
 	}
 }
@@ -115,7 +115,7 @@ func TestEnforceOnScopedInstanceAny_StructForcesTenantID(t *testing.T) {
 // TestEnforceOnScopedInstanceAny_NonScopedPassesThrough 非租户实体放行，
 // 无 force-set。
 func TestEnforceOnScopedInstanceAny_NonScopedPassesThrough(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 42})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-42"})
 	ent := &nonScopedEntity{Name: "x"}
 	if err := viewer.EnforceOnScopedInstanceAny(ctx, ent); err != nil {
 		t.Fatalf("non-scoped must pass through, got %v", err)

@@ -23,13 +23,13 @@ type nonScopedEntity struct {
 }
 
 type testEnforceViewer struct {
-	tid      uint64
+	tid      string
 	platform bool
 	system   bool
 }
 
 func (v testEnforceViewer) UserID() uint64                 { return 0 }
-func (v testEnforceViewer) TenantID() uint64               { return v.tid }
+func (v testEnforceViewer) TenantID() string               { return v.tid }
 func (v testEnforceViewer) OrgUnitID() uint64              { return 0 }
 func (v testEnforceViewer) Permissions() []string          { return nil }
 func (v testEnforceViewer) Roles() []string                { return nil }
@@ -37,13 +37,13 @@ func (v testEnforceViewer) DataScope() []viewer.DataScope  { return nil }
 func (v testEnforceViewer) TraceID() string                { return "" }
 func (v testEnforceViewer) HasPermission(_, _ string) bool { return false }
 func (v testEnforceViewer) IsPlatformContext() bool        { return v.platform }
-func (v testEnforceViewer) IsTenantContext() bool          { return v.tid > 0 && !v.platform }
+func (v testEnforceViewer) IsTenantContext() bool          { return v.tid != "" && !v.platform }
 func (v testEnforceViewer) IsSystemContext() bool          { return v.system }
 func (v testEnforceViewer) ShouldAudit() bool              { return false }
 
 // TestInjectTenantFilter_TenantContextInjects 租户业务视图下注入 tenant_id 谓词。
 func TestInjectTenantFilter_TenantContextInjects(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 7})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-7"})
 	qb := query.NewQueryBuilder("t", nil)
 	if err := InjectTenantFilterIntoBuilder[scopedEntity](ctx, qb); err != nil {
 		t.Fatalf("inject: %v", err)
@@ -59,7 +59,7 @@ func TestInjectTenantFilter_TenantContextInjects(t *testing.T) {
 
 // TestInjectTenantFilter_PlatformContextSkips 平台视图不注入。
 func TestInjectTenantFilter_PlatformContextSkips(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 0, platform: true})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-0", platform: true})
 	qb := query.NewQueryBuilder("t", nil)
 	if err := InjectTenantFilterIntoBuilder[scopedEntity](ctx, qb); err != nil {
 		t.Fatalf("inject: %v", err)
@@ -84,7 +84,7 @@ func TestInjectTenantFilter_MissingViewerFailClosed(t *testing.T) {
 
 // TestInjectTenantFilter_NonScopedSkips 非 tenant 实体跳过。
 func TestInjectTenantFilter_NonScopedSkips(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 7})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-7"})
 	qb := query.NewQueryBuilder("t", nil)
 	err := InjectTenantFilterIntoBuilder[nonScopedEntity](ctx, qb)
 	if err != nil {
@@ -102,13 +102,13 @@ func TestInjectTenantFilter_NonScopedSkips(t *testing.T) {
 // TestEnforceTenantOnBatchItem_StructForcesTenantID 验证 B.12 修复：批量插入
 // 中 struct 路径（可取址）在租户业务视图下强制覆盖 tenant_id。
 func TestEnforceTenantOnBatchItem_StructForcesTenantID(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 42})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-42"})
 	s := []scopedEntity{{Name: "x"}}
 	rv := reflect.ValueOf(s)
 	if err := enforceTenantOnBatchItem[scopedEntity](ctx, rv, 0); err != nil {
 		t.Fatalf("enforce: %v", err)
 	}
-	if s[0].TenantID.TenantID == nil || *s[0].TenantID.TenantID != 42 {
+	if s[0].TenantID.TenantID == nil || *s[0].TenantID.TenantID != "t-42" {
 		t.Errorf("struct path must force-set tenant_id to 42, got %v", s[0].TenantID.TenantID)
 	}
 }
@@ -117,7 +117,7 @@ func TestEnforceTenantOnBatchItem_StructForcesTenantID(t *testing.T) {
 // map 路径在租户业务视图下强制覆盖 map["tenant_id"]，防止调用方传不含
 // tenant_id 的 map 导致 NULL 落库。
 func TestEnforceTenantOnBatchItem_MapForcesTenantID(t *testing.T) {
-	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: 42})
+	ctx := viewer.WithContext(context.Background(), testEnforceViewer{tid: "t-42"})
 	m := []map[string]any{{"name": "x"}}
 	rv := reflect.ValueOf(m)
 	if err := enforceTenantOnBatchItem[scopedEntity](ctx, rv, 0); err != nil {
@@ -127,8 +127,8 @@ func TestEnforceTenantOnBatchItem_MapForcesTenantID(t *testing.T) {
 	if !ok {
 		t.Fatalf("map path must force-set tenant_id")
 	}
-	tid, ok := v.(uint32)
-	if !ok || tid != 42 {
+	tid, ok := v.(string)
+	if !ok || tid != "t-42" {
 		t.Errorf("map path must force-set tenant_id to 42, got %v", v)
 	}
 }
