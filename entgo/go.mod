@@ -6,7 +6,7 @@ require (
 	entgo.io/ent v0.14.6
 	github.com/XSAM/otelsql v0.43.0
 	github.com/google/uuid v1.6.0
-	github.com/kalandramo/bald-crud/audit v0.1.0
+	github.com/kalandramo/bald-crud/audit v0.2.0
 	github.com/kalandramo/bald-crud/cache v0.1.0
 	github.com/kalandramo/bald-crud/pagination v0.1.0
 	github.com/kalandramo/bald-crud/viewer v0.2.0
