@@ -90,6 +90,14 @@ func EnforceOnScopedInstanceAny(ctx context.Context, instance any) error {
 	if instance == nil {
 		return nil
 	}
+	// typed-nil 指针（2026-09-24 修复）：经 any 装箱的 `(*T)(nil)` 其接口值
+	// 非 nil，上面的判定拦不住，会继续走到 SetTenantID 而 panic（如批量插入
+	// 中 nil 指针元素经 item.Addr().Interface() 传入）。反射可识别底层 nil，
+	// 与泛型版 `instance == nil` 的语义对齐。
+	// 由 TestEnforceOnScopedInstanceAny_TypedNilPointer 锁定。
+	if rv := reflect.ValueOf(instance); rv.Kind() == reflect.Ptr && rv.IsNil() {
+		return nil
+	}
 	sm, ok := instance.(ScopedModel)
 	if !ok {
 		return nil
