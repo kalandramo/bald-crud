@@ -70,3 +70,65 @@ func TestSorting_DefaultFieldValidated(t *testing.T) {
 		t.Errorf("hostile default sort field must be dropped, got %q", q)
 	}
 }
+
+// TestSorting_UnknownColumnDropped 验证已注册表上「合法标识符但不在该表白名单」
+// 的排序字段被 columnAllowed **拒绝**。
+//
+// 与 HostileFieldDropped 的区别：那些用例的载荷含 SQL 元字符，被
+// IsValidFieldName 硬性校验拦下；本用例的 "password" 是**完全合法的标识符**，
+// 只有列白名单能拦住它。此路径此前无测试覆盖（登记 #3g）——探针证实：
+// 把 ent.CheckColumn 改为恒返回 nil 时，本包既有测试全部报 ok（未抓到）。
+func TestSorting_UnknownColumnDropped(t *testing.T) {
+	for _, col := range []string{"password", "secret", "nonexistent_col"} {
+		q := buildSortingSQL(t, "users", col)
+		if strings.Contains(q, "ORDER BY") {
+			t.Errorf("column %q is not in users whitelist, must not appear in ORDER BY, got %q", col, q)
+		}
+	}
+}
+
+// TestSorting_MixedValidAndUnknownFields 验证混合输入下只丢弃未知字段，
+// 合法字段仍被保留。
+func TestSorting_MixedValidAndUnknownFields(t *testing.T) {
+	sel, err := NewStructuredSorting().BuildSelector([]*storev1.Sorting{
+		{Field: "password", Direction: storev1.Sorting_ASC},
+		{Field: "name", Direction: storev1.Sorting_DESC},
+	})
+	if err != nil {
+		t.Fatalf("BuildSelector error: %v", err)
+	}
+	s := sql.Select("*").From(sql.Table("users"))
+	sel(s)
+	q, _ := s.Query()
+	if !strings.Contains(q, "ORDER BY") || !strings.Contains(q, "name") {
+		t.Errorf("valid field 'name' must survive, got %q", q)
+	}
+	if strings.Contains(q, "password") {
+		t.Errorf("unknown field 'password' must be dropped, got %q", q)
+	}
+}
+
+// TestSorting_UnknownTableFailOpen 验证未注册表上列白名单 fail-open——
+// 合法标识符字段仍被保留（契约的相反方向）。
+func TestSorting_UnknownTableFailOpen(t *testing.T) {
+	q := buildSortingSQL(t, "custom_table", "whatever")
+	if !strings.Contains(q, "ORDER BY") || !strings.Contains(q, "whatever") {
+		t.Errorf("unknown table must fail-open (keep field), got %q", q)
+	}
+}
+
+// TestSorting_DefaultFieldUnknownColumnDropped 验证默认排序字段走同一条
+// 白名单拒绝路径——BuildSelectorWithDefaultField 有独立代码分支，
+// 若只测 BuildSelector 会漏掉这一处。
+func TestSorting_DefaultFieldUnknownColumnDropped(t *testing.T) {
+	sel, err := NewStructuredSorting().BuildSelectorWithDefaultField(nil, "password", true)
+	if err != nil {
+		t.Fatalf("BuildSelectorWithDefaultField error: %v", err)
+	}
+	s := sql.Select("*").From(sql.Table("users"))
+	sel(s)
+	q, _ := s.Query()
+	if strings.Contains(q, "ORDER BY") || strings.Contains(q, "password") {
+		t.Errorf("default sort field 'password' not in whitelist must be dropped, got %q", q)
+	}
+}
