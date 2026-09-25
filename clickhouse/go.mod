@@ -5,7 +5,7 @@ go 1.27.1
 require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.48.0
 	github.com/kalandramo/bald-crud/pagination v0.1.0
-	github.com/kalandramo/bald-crud/viewer v0.2.0
+	github.com/kalandramo/bald-crud/viewer v0.3.0
 	github.com/kalandramo/bald-utils v0.1.0
 	github.com/kalandramo/bald-utils/mapper v0.1.0
 	github.com/kalandramo/bald/bconf v0.1.0
