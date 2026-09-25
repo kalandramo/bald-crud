@@ -3,10 +3,16 @@
 # - 多模块仓库（根 + 13 子模块），无 matrix 预发现 job——shell 循环即可，
 #   模块增删零维护。
 # - go 版本写死与各 go.mod 对齐（go-version-file 仅适用单模块仓库）。
-# - 集成测试约定：go test -short 跳过集成测试（各引擎 client_test 的
-#   testing.Short() 保护）；elasticsearch 的 repository 测试无保护
-#   （tx7do 迁移残留，硬连真实 ES），-short 是 CI 全绿的必要条件；
-#   引擎真连验证属发布前手工步骤。
+# - 集成测试约定：`go test -short` 跳过需真实引擎的集成测试。6 个模块的
+#   client_test 用 testing.Short() 保护（clickhouse/doris/elasticsearch/
+#   influxdb/mongodb/opensearch）。其中 mongodb 与 elasticsearch **只有
+#   -short 单保护**（无「服务不可达则 Skip」兜底），故本机无引擎时只有
+#   -short 能保证全绿——实测去掉 -short 后两者 FAIL（mongodb 42s 超时、
+#   elasticsearch 连接 localhost:9200 被拒）；clickhouse/doris/influxdb/
+#   opensearch 另有可达性探测兜底，缺服务时走 t.Skip 仍绿。
+#   cache 用 miniredis 起内存实例，无需外部服务。
+#   引擎真连验证（不带 -short）属发布前手工步骤——各引擎地址/凭据见对应
+#   client_test.go 的 createTestClient。
 name: ci
 
 on:
