@@ -86,11 +86,14 @@ func TestNoopContext_Semantics(t *testing.T) {
 	if vc.ShouldAudit() {
 		t.Error("noop 不应要求审计")
 	}
-	// ⚠️ 记录现状（见《待处理事项》#2）：noop 三视图全 false，
-	// 而接口注释称 IsPlatformContext = 「TenantID == ""」——noop.TenantID() 恰为空串，
-	// 故注释与实现存在张力。本测试钉住**实现**，注释争议留待 #2 决策。
+	// noop 三视图全 false（2026-09-25，见《待处理事项》#2）：既非平台也非系统，
+	// 且租户为空 → 经 EnforceTenant 判为「身份不完整」fail-closed。
+	// 平台身份必须显式声明，匿名绝不被推断为平台视图。
 	if vc.IsPlatformContext() {
-		t.Error("现状：noop.IsPlatformContext() 为 false（noop.go:14）")
+		t.Error("noop.IsPlatformContext() 必须为 false——匿名不是平台视图")
+	}
+	if vc.IsTenantContext() {
+		t.Error("noop.IsTenantContext() 必须为 false——匿名无租户身份")
 	}
 }
 

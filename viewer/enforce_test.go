@@ -120,28 +120,30 @@ func TestEnforceTenant_PlatformPrecedence(t *testing.T) {
 	}
 }
 
-// TestEnforceTenant_NoopContextCurrentBehavior 钉住 noop（匿名）上下文经
-// EnforceTenant 的**当前**决策。
+// TestEnforceTenant_NoopContextFailsClosed noop（匿名）上下文经 EnforceTenant
+// 必须 **fail-closed**。
 //
-// ⚠️ 这是《待处理事项》#2 记录的语义争议点，本测试记录**现状**、不背书其正确性：
-// noopContext.IsPlatformContext() 返回 false（noop.go:14），故它不被认作平台视图，
-// 落入租户业务视图分支 → Enforce=true 但 TenantID==""。
-// 下游据此会注入 `tenant_id = ''` 谓词，与「匿名请求不应看到任何行」的
-// fail-closed 预期存在张力。
+// 2026-09-25 决策（《待处理事项》#2，方案 D）：noop 非平台、非系统、租户为空，
+// 属「身份不完整」——拒绝，而非落入租户分支注入 `tenant_id = ''`
+// （那会放行一条语义不明的查询，与「匿名不应看到任何行」相悖）。
+func TestEnforceTenant_NoopContextFailsClosed(t *testing.T) {
+	_, err := viewer.EnforceTenant(ctxWith(viewer.NewNoopContext()))
+	if !errors.Is(err, viewer.ErrMissingViewer) {
+		t.Fatalf("noop（匿名）上下文应 fail-closed（ErrMissingViewer），got err=%v", err)
+	}
+}
+
+// TestEnforceTenant_EmptyTenantFailsClosed 「非平台、非系统、租户为空」的
+// 身份一律 fail-closed——这是方案 D 的核心闸门。
 //
-// 若 #2 决策变更（如 noop 改为显式平台视图、或 fail-closed 拒绝），
-// 本测试将变红——那正是提醒同步更新《待处理事项》#2 的信号。
-func TestEnforceTenant_NoopContextCurrentBehavior(t *testing.T) {
-	dec, err := viewer.EnforceTenant(ctxWith(viewer.NewNoopContext()))
-	if err != nil {
-		t.Fatalf("unexpected err: %v", err)
-	}
-	if !dec.Enforce {
-		t.Fatalf("现状：noop 落入租户分支应 Enforce=true。" +
-			"若此处失败，说明 #2 已决策变更——请同步更新本测试与《待处理事项》#2")
-	}
-	if dec.TenantID != "" {
-		t.Errorf("现状：noop 的 TenantID 为空串，got %q", dec.TenantID)
+// 覆盖「已认证但租户为空」（如 SimpleViewer{Platform:false, TenantID:""}）：
+// 旧语义下它被 IsPlatformContext 由空租户**推断**为平台视图 → pass-through
+// （fail-open）；新语义要求平台身份必须**显式声明**，空租户不再被推断为平台。
+func TestEnforceTenant_EmptyTenantFailsClosed(t *testing.T) {
+	vc := &testViewer{tenantID: "", platform: false, system: false}
+	_, err := viewer.EnforceTenant(ctxWith(vc))
+	if !errors.Is(err, viewer.ErrMissingViewer) {
+		t.Fatalf("空租户（非显式平台、非系统）应 fail-closed，got err=%v", err)
 	}
 }
 

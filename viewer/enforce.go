@@ -25,7 +25,12 @@ type EnforcementDecision struct {
 // TenantPrivacy 一致：
 //   - 缺 ViewerContext → (Enforce=false, err=ErrMissingViewer) fail-closed
 //   - 平台/系统视图（IsPlatformContext || IsSystemContext）→ (Enforce=false, err=nil) pass-through
-//   - 租户业务视图（tenant_id > 0）→ (Enforce=true, TenantID=vc.TenantID()) 注入谓词/强制 set
+//   - 租户业务视图（TenantID != ""）→ (Enforce=true, TenantID=vc.TenantID()) 注入谓词/强制 set
+//   - 身份不完整（非平台、非系统、TenantID == ""）→ fail-closed
+//
+// 平台身份**必须显式声明**（IsPlatformContext），绝不基于「TenantID 为空」推断
+// ——空租户同时表示「匿名」与「平台视图」两种相反语义，靠推断会 fail-open
+// （2026-09-25，见《待处理事项》#2）。
 //
 // 此函数不触碰查询/变更对象本身，仅给出决策；具体注入方式由各模块按其
 // ORM/查询构造器实现（gorm clause、ent predicate、mongo bson、SQL where）。
@@ -37,7 +42,14 @@ func EnforceTenant(ctx context.Context) (EnforcementDecision, error) {
 	if vc.IsPlatformContext() || vc.IsSystemContext() {
 		return EnforcementDecision{}, nil
 	}
-	return EnforcementDecision{Enforce: true, TenantID: vc.TenantID()}, nil
+	tid := vc.TenantID()
+	if tid == "" {
+		// 身份不完整：非平台、非系统、又无租户——拒绝而非注入空谓词。
+		// 旧语义会返回 (Enforce=true, TenantID="")，下游注入 `tenant_id = ''`
+		// 放行一条语义不明的查询；新语义 fail-closed。
+		return EnforcementDecision{}, ErrMissingViewer
+	}
+	return EnforcementDecision{Enforce: true, TenantID: tid}, nil
 }
 
 // ScopedModel 是租户隔离实体的 opt-in 标记接口。实体嵌入对应模块的

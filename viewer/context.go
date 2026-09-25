@@ -10,10 +10,14 @@ type Context interface {
 
 	// TenantID 返回租户ID。
 	//
-	// 类型为 string（2026-09-24 统一）：空串表示「无租户上下文」＝平台视图。
+	// 类型为 string（2026-09-24 统一）：空串表示「无租户上下文」（身份不完整）。
 	// 此前为 uint64，用 0 同时表达「平台视图」与「非数字租户 ID 解析失败」，
 	// 导致后者被静默误判为平台视图而跳过租户强制（安全失效）。string 无解析
 	// 失败路径，语义单一。
+	//
+	// 注意（2026-09-25，见《待处理事项》#2）：空租户**不等于**平台视图——
+	// 平台身份必须显式声明（见 IsPlatformContext）。空租户经 EnforceTenant
+	// 一律 fail-closed。
 	TenantID() string
 
 	// OrgUnitID 返回当前身份挂载的组织单元 ID
@@ -34,10 +38,15 @@ type Context interface {
 	// HasPermission 判断是否具有某个动作/资源的权限（如 "update:user"）
 	HasPermission(action, resource string) bool
 
-	// IsPlatformContext 当前是否处于平台管理视图（无租户上下文，TenantID == ""）
+	// IsPlatformContext 当前是否处于平台管理视图（跨租户）。
+	//
+	// 语义（2026-09-25 收紧，见《待处理事项》#2）：**必须显式声明**，绝不基于
+	// 「TenantID 为空」推断——空租户同时表示「匿名/未认证」与「平台视图」两种
+	// 相反语义，靠推断会 fail-open（匿名请求被当作平台视图而看到全部租户数据）。
+	// 实现者须以显式字段（如 SimpleViewer.Platform）表达平台身份。
 	IsPlatformContext() bool
 
-	// IsTenantContext 当前是否处于租户业务视图（TenantID != ""）
+	// IsTenantContext 当前是否处于租户业务视图（有租户身份的普通业务请求）。
 	IsTenantContext() bool
 
 	// IsSystemContext 判断是否为系统后台任务

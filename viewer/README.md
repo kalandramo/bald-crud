@@ -2,6 +2,9 @@
 
 查看者（Viewer）上下文管理包，提供统一的身份认证、权限控制和数据范围隔离功能。这是 go-crud 项目的安全和权限基础设施层，用于在多租户系统中实现细粒度的访问控制。
 
+> ⚠️ **语义变更（2026-09-25，见《待处理事项》#2）**：`IsPlatformContext()` 改为**必须显式声明**（不再由 `TenantID == ""` 推断）；空租户（非平台、非系统）经 `EnforceTenant` **fail-closed**。
+> 本 README 的示例代码停留在早期的 `TenantID uint64` 版本（用 `tenantID == 0` 判平台视图），**已过时**——请以 `context.go` 的接口注释与《Bald CRUD 桥接设计》为准。桥接层实现见 `bald/pkg/crudbridge` 的 `SimpleViewer.Platform`。
+
 ## 特性
 
 - ✅ **统一上下文接口** - Context 接口封装所有身份信息
@@ -323,9 +326,9 @@ type Context interface {
     TraceID() string  // 请求追踪ID
     
     // 上下文类型判断
-    IsPlatformContext() bool  // 是否为平台管理视图（tenant_id == 0）
-    IsTenantContext() bool    // 是否为租户业务视图（tenant_id > 0）
-    IsSystemContext() bool    // 是否为系统后台任务（user_id == 0）
+    IsPlatformContext() bool  // 是否为平台管理视图（必须显式声明 Platform，2026-09-25）
+    IsTenantContext() bool    // 是否为租户业务视图（TenantID 非空且非平台非系统）
+    IsSystemContext() bool    // 是否为系统后台任务（显式 System 字段）
     
     // 审计控制
     ShouldAudit() bool  // 是否需要记录审计日志
