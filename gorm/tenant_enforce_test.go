@@ -46,12 +46,16 @@ func viewerCtx(tid string) context.Context {
 	return viewer.WithContext(context.Background(), &stubViewer{tid: tid})
 }
 
-// platformViewerCtx 构造一个平台视图（tid==""）的 viewer Context。
+// platformViewerCtx 构造一个平台视图的 viewer Context（2026-09-25：平台身份
+// 必须显式声明，不再由空租户推断）。
 func platformViewerCtx() context.Context {
-	return viewer.WithContext(context.Background(), &stubViewer{tid: ""})
+	return viewer.WithContext(context.Background(), &stubViewer{platform: true})
 }
 
-type stubViewer struct{ tid string }
+type stubViewer struct {
+	tid      string
+	platform bool
+}
 
 func (s *stubViewer) UserID() uint64                 { return 0 }
 func (s *stubViewer) TenantID() string               { return s.tid }
@@ -61,8 +65,8 @@ func (s *stubViewer) Roles() []string                { return nil }
 func (s *stubViewer) DataScope() []viewer.DataScope  { return nil }
 func (s *stubViewer) TraceID() string                { return "" }
 func (s *stubViewer) HasPermission(_, _ string) bool { return false }
-func (s *stubViewer) IsPlatformContext() bool        { return s.tid == "" }
-func (s *stubViewer) IsTenantContext() bool          { return s.tid != "" }
+func (s *stubViewer) IsPlatformContext() bool        { return s.platform }
+func (s *stubViewer) IsTenantContext() bool          { return s.tid != "" && !s.platform }
 func (s *stubViewer) IsSystemContext() bool          { return false }
 func (s *stubViewer) ShouldAudit() bool              { return false }
 
@@ -110,6 +114,24 @@ func TestTenantEnforce_MissingViewerFailClosed(t *testing.T) {
 	tx := db.WithContext(context.Background()).First(&out, 1)
 	if tx.Error == nil {
 		t.Errorf("missing viewer context must fail-closed, got nil error")
+	}
+}
+
+// TestTenantEnforce_EmptyTenantFailsClosed 端到端锁定方案 D 的核心闸门
+// （2026-09-25，见《待处理事项》#2）：非平台、非系统、租户为空的身份
+// 经真实 gorm 查询必须 **fail-closed**，而非注入 `tenant_id = ''`。
+//
+// 旧语义下该身份被 IsPlatformContext 由空租户**推断**为平台视图 → 放行
+// （fail-open）；新语义要求平台身份显式声明，空租户落入「身份不完整」被拒。
+// 这是真实 DB + 真实 callback 的完整路径（仅身份为注入，非 mock 中间层）。
+func TestTenantEnforce_EmptyTenantFailsClosed(t *testing.T) {
+	db := openTenantTestDB(t)
+	ctx := viewer.WithContext(context.Background(), &stubViewer{tid: ""}) // 空租户、非平台
+
+	var out tenantTestEntity
+	tx := db.WithContext(ctx).First(&out, 1)
+	if tx.Error == nil {
+		t.Fatalf("空租户（非显式平台、非系统）必须 fail-closed，got nil error")
 	}
 }
 

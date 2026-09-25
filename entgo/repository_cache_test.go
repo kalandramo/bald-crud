@@ -17,6 +17,7 @@ type stubViewer struct {
 	tenantID string
 	orgID    uint64
 	scopes   []viewer.DataScope
+	platform bool
 }
 
 func (s stubViewer) UserID() uint64                 { return s.userID }
@@ -27,8 +28,8 @@ func (s stubViewer) Roles() []string                { return nil }
 func (s stubViewer) DataScope() []viewer.DataScope  { return s.scopes }
 func (s stubViewer) TraceID() string                { return "" }
 func (s stubViewer) HasPermission(_, _ string) bool { return false }
-func (s stubViewer) IsPlatformContext() bool        { return s.tenantID == "" }
-func (s stubViewer) IsTenantContext() bool          { return s.tenantID != "" }
+func (s stubViewer) IsPlatformContext() bool        { return s.platform }
+func (s stubViewer) IsTenantContext() bool          { return s.tenantID != "" && !s.platform }
 func (s stubViewer) IsSystemContext() bool          { return false }
 func (s stubViewer) ShouldAudit() bool              { return false }
 

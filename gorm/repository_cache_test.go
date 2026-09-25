@@ -81,6 +81,7 @@ type gormStubViewer struct {
 	tenantID string
 	orgID    uint64
 	scopes   []viewer.DataScope
+	platform bool
 }
 
 func (s gormStubViewer) UserID() uint64                 { return s.userID }
@@ -91,8 +92,8 @@ func (s gormStubViewer) Roles() []string                { return nil }
 func (s gormStubViewer) DataScope() []viewer.DataScope  { return s.scopes }
 func (s gormStubViewer) TraceID() string                { return "" }
 func (s gormStubViewer) HasPermission(_, _ string) bool { return false }
-func (s gormStubViewer) IsPlatformContext() bool        { return s.tenantID == "" }
-func (s gormStubViewer) IsTenantContext() bool          { return s.tenantID != "" }
+func (s gormStubViewer) IsPlatformContext() bool        { return s.platform }
+func (s gormStubViewer) IsTenantContext() bool          { return s.tenantID != "" && !s.platform }
 func (s gormStubViewer) IsSystemContext() bool          { return false }
 func (s gormStubViewer) ShouldAudit() bool              { return false }
 

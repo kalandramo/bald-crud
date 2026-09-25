@@ -32,20 +32,19 @@ type TenantPrivacy struct {
 }
 
 func (f TenantPrivacy) EvalQuery(ctx context.Context, query ent.Query) error {
-	vc, exist := viewer.FromContext(ctx)
-	// 如果身份丢失，安全起见应直接拒绝操作（Deny），而不是跳过
-	if !exist {
-		return fmt.Errorf("security: missing ViewerContext in context")
+	// 委托 EnforceTenant（租户隔离的唯一闸门）：缺身份 / 空租户（非显式平台、
+	// 非系统）一律 fail-closed，平台/系统 pass-through，租户业务视图注入谓词。
+	// 2026-09-25 收敛：此前内联 IsPlatformContext||IsSystemContext，与
+	// EnforceTenant 是两个各自判断的违反点（空租户在此处不会被拒绝）。
+	dec, err := viewer.EnforceTenant(ctx)
+	if err != nil {
+		return err
+	}
+	if !dec.Enforce {
+		return nil // 平台/系统视图：放行（允许查看全量数据）
 	}
 
-	// 平台管理视图/系统视图放行：允许查看全量数据
-	if vc.IsPlatformContext() || vc.IsSystemContext() {
-		return nil
-	}
-
-	tid := vc.TenantID()
-
-	if err := f.injectTenantWhere(query, tid); err != nil {
+	if err := f.injectTenantWhere(query, dec.TenantID); err != nil {
 		return err
 	}
 
@@ -53,9 +52,10 @@ func (f TenantPrivacy) EvalQuery(ctx context.Context, query ent.Query) error {
 }
 
 func (f TenantPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	vc, exist := viewer.FromContext(ctx)
-	if !exist {
-		return fmt.Errorf("missing ViewerContext in context")
+	// 委托 EnforceTenant：三态与 EvalQuery 同源（单一闸门）。
+	dec, err := viewer.EnforceTenant(ctx)
+	if err != nil {
+		return err
 	}
 
 	op := m.Op()
@@ -65,7 +65,7 @@ func (f TenantPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 	// 非平台上下文触碰 tenant_id 时，仅允许"值不变的冗余设置"（旧行、新值、
 	// 当前访问者三者同租户），把记录移到其他租户或改他租户记录一律拒绝。
 	if !op.Is(ent.OpCreate) {
-		if vc.IsPlatformContext() || vc.IsSystemContext() {
+		if !dec.Enforce {
 			return nil
 		}
 		if val, set := m.Field("tenant_id"); set {
@@ -76,7 +76,7 @@ func (f TenantPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 				if err != nil {
 					return fmt.Errorf("security: tenant rule cannot verify tenant_id change: %w", err)
 				}
-				viewerTid := vc.TenantID()
+				viewerTid := dec.TenantID
 				if prev == nil || fmt.Sprint(*prev) != fmt.Sprint(val) || viewerTid != fmt.Sprint(val) {
 					return fmt.Errorf("security: cross-tenant tenant_id change denied")
 				}
@@ -87,14 +87,10 @@ func (f TenantPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 		return nil
 	}
 
-	tid := vc.TenantID()
+	tid := dec.TenantID
 
-	if vc.IsPlatformContext() {
-		// 如果管理员在代码里写了 .SetTenantID("101")，则尊重管理员的选择
-		if _, set := m.Field("tenant_id"); set {
-			return nil
-		}
-		// 如果管理员没设置，且当前上下文也没指定目标租户，则按管理员逻辑执行
+	if !dec.Enforce {
+		// 平台/系统视图：尊重调用方的显式设置（若有），否则不强制。
 		return nil
 	}
 

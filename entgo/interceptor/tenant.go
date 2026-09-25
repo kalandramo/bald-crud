@@ -10,24 +10,24 @@ import (
 	"github.com/kalandramo/bald-crud/viewer"
 )
 
-// TenantInterceptor 这是一个通用的租户拦截器
+// TenantInterceptor 这是一个通用的租户拦截器。
+//
+// 2026-09-25 收敛：委托 EnforceTenant（租户隔离的唯一闸门）——缺身份/空租户
+// （非显式平台、非系统）fail-closed，平台/系统 pass-through，租户业务视图注入谓词。
+// 此前内联 IsPlatformContext||IsSystemContext，与 EnforceTenant 是两个各自判断的
+// 违反点（空租户在此处不会被拒绝）。
 func TenantInterceptor() ent.Interceptor {
 	return ent.InterceptFunc(func(next ent.Querier) ent.Querier {
 		return ent.QuerierFunc(func(ctx context.Context, query ent.Query) (ent.Value, error) {
-			vc, exist := viewer.FromContext(ctx)
-			// 如果身份丢失，安全起见应直接拒绝操作（Deny），而不是跳过
-			if !exist {
-				return nil, fmt.Errorf("security: missing ViewerContext in context")
+			dec, err := viewer.EnforceTenant(ctx)
+			if err != nil {
+				return nil, err
+			}
+			if !dec.Enforce {
+				return next.Query(ctx, query) // 平台/系统视图：放行
 			}
 
-			// 平台管理视图/系统视图放行：允许查看全量数据
-			if vc.IsPlatformContext() || vc.IsSystemContext() {
-				return next.Query(ctx, query)
-			}
-
-			tid := vc.TenantID()
-
-			if err := injectTenantWhere(query, tid); err != nil {
+			if err := injectTenantWhere(query, dec.TenantID); err != nil {
 				return nil, err
 			}
 
